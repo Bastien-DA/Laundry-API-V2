@@ -1,0 +1,183 @@
+name: Generate SDK
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+jobs:
+  generate-sdk:
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: app
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd="pg_isready -U postgres -d app"
+          --health-interval=5s
+          --health-timeout=5s
+          --health-retries=20
+
+    env:
+      # Prisma v7 (prisma.config.ts) va lire DATABASE_URL
+      DATABASE_URL: postgresql://postgres:postgres@localhost:5432/app?schema=public
+      NODE_ENV: production
+      PORT: "3000"
+      JWT_SECRET: "change_me_change_me_change_me_123456" # min 20 chars
+      JWT_EXPIRES_IN: "30d"
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # Node + cache npm
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      # Génère prisma/schema.prisma depuis tes fichiers split + génère le client
+      - name: Prisma build schema + generate client
+        run: |
+          npm run prisma:build
+          npx prisma validate --config prisma.config.ts
+          npx prisma generate --config prisma.config.ts
+
+      # Optionnel mais souvent utile: migrer la DB CI (sinon Prisma connect peut échouer selon ton code)
+      - name: Prisma migrate (CI database)
+        run: |
+          npx prisma migrate deploy --config prisma.config.ts || npx prisma migrate dev --name ci --config prisma.config.ts
+
+      # Build Nest
+      - name: Build API
+        run: npm run build
+
+      # Run API en arrière-plan
+      - name: Run API
+        run: |
+          node dist/main.js &
+          echo $! > api.pid
+          # Attendre que l'API réponde
+          for i in {1..30}; do
+            curl -sSf http://localhost:3000/health >/dev/null && break || true
+            curl -sSf http://localhost:3000/docs-json >/dev/null && break || true
+            sleep 2
+          done
+
+      # Récupérer swagger.json
+      # 👉 Par défaut Nest Swagger: si tu fais SwaggerModule.setup('docs', ...),
+      # le JSON est servi sur /docs-json
+      - name: Download swagger.json
+        run: |
+          curl -sSf http://localhost:3000/docs-json -o swagger.json
+          ls -lah swagger.json
+
+      # Installer Java pour OpenAPI Generator
+      - name: Install Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      # Installer OpenAPI Generator
+      - name: Install OpenAPI Generator
+        run: |
+          wget https://repo1.maven.org/maven2/org/openapitools/openapi-generator-cli/7.17.0/openapi-generator-cli-7.17.0.jar -O openapi-generator-cli.jar
+
+      # Générer le SDK Flutter/Dart
+      - name: Generate Flutter SDK
+        run: |
+          rm -rf sdk
+          mkdir -p sdk
+          java -jar openapi-generator-cli.jar generate \
+            -i swagger.json \
+            -g dart-dio \
+            -o sdk \
+            --additional-properties=serializationLibrary=json_serializable
+
+      # Installer Flutter
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+
+      - name: Show Flutter/Dart versions
+        run: |
+          flutter --version
+          dart --version
+
+      - name: Patch generated pubspec (Dart 3.8 + json_annotation)
+        working-directory: sdk
+        run: |
+          # Force SDK constraint
+          if grep -q "^environment:" pubspec.yaml; then
+            sed -i 's/^  sdk: .*/  sdk: ">=3.8.0 <4.0.0"/' pubspec.yaml || true
+          else
+            printf '\nenvironment:\n  sdk: ">=3.8.0 <4.0.0"\n' >> pubspec.yaml
+          fi
+
+          # Force json_annotation >= 4.9.0 (si présent)
+          if grep -q "^  json_annotation:" pubspec.yaml; then
+            sed -i 's/^  json_annotation: .*/  json_annotation: ^4.9.0/' pubspec.yaml
+          fi
+
+          cat pubspec.yaml
+
+      - name: Flutter pub get + build_runner
+        working-directory: sdk
+        run: |
+          flutter pub get
+          flutter pub run build_runner build --delete-conflicting-outputs
+
+      - name: Save SDK outside repo
+        run: |
+          rm -rf /tmp/sdk
+          cp -r sdk /tmp/sdk
+
+      - name: Stop API
+        if: always()
+        run: |
+          if [ -f api.pid ]; then
+            kill "$(cat api.pid)" || true
+          fi
+
+      # Push sur la branche sdk
+      - name: Push to sdk branch
+        run: |
+          set -euxo pipefail
+
+          git config --global user.email "github-actions@github.com"
+          git config --global user.name "GitHub Actions"
+
+          if git ls-remote --exit-code --heads origin sdk; then
+            git fetch origin sdk
+            git checkout -B sdk origin/sdk
+          else
+            git checkout -B sdk
+          fi
+
+          rm -rf ./*
+          cp -r /tmp/sdk/* .
+
+          git add .
+          if git diff --cached --quiet; then
+            echo "No changes to commit"
+          else
+            git commit -m "Update SDK"
+            git push origin sdk --force
+          fi
