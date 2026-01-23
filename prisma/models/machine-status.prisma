@@ -1,0 +1,14 @@
+model MachineStatus {
+  id               String        @id @default(uuid()) @db.Uuid
+
+  status           MachineStatusEnum
+  updatedAt        DateTime      @updatedAt
+
+  currentProgramId String?       @db.Uuid
+  currentProgram   Program?      @relation(fields: [currentProgramId], references: [id], onDelete: SetNull)
+
+  machineId        String        @unique @db.Uuid
+  machine          Machine       @relation(fields: [machineId], references: [id], onDelete: Cascade)
+
+  @@map("machine_statuses")
+}

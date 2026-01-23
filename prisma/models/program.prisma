@@ -1,0 +1,14 @@
+model Program {
+  id          String   @id @default(uuid()) @db.Uuid
+  name        String   @db.VarChar(50)
+
+  temperature Int
+  speed       Int
+  duration    Int      // minutes
+
+  machines    Machine[] // Many-to-Many
+  currentOnStatuses MachineStatus[]
+
+
+  @@map("programs")
+}

@@ -1,14 +1,125 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
-generator client {
-  provider = "prisma-client"
-  output   = "../generated/prisma"
-}
-
 datasource db {
   provider = "postgresql"
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+enum MachineStatusEnum {
+  AVAILABLE
+  RUNNING
+  PAUSED
+  OUT_OF_ORDER
+}
+
+enum MachineType {
+  WASHER
+  DRYER
+}
+
+enum PersonType {
+  ADMIN
+  CUSTOMER
+  TECHNICIAN
+}
+
+model Laundry {
+  id        String   @id @default(uuid()) @db.Uuid
+  name      String   @db.VarChar(50)
+  hours     String   @db.VarChar(100)
+  address   String   @db.VarChar(200)
+
+  latitude  Decimal  @db.Decimal(10, 7)
+  longitude Decimal  @db.Decimal(10, 7)
+
+  createdAt DateTime @default(now())
+
+  // Relations
+  personId  String   @db.Uuid
+  person    Person   @relation(fields: [personId], references: [id], onDelete: Cascade)
+
+  machines  Machine[]
+
+  @@map("laundries")
+}
+
+model MachineStatus {
+  id               String        @id @default(uuid()) @db.Uuid
+
+  status           MachineStatusEnum
+  updatedAt        DateTime      @updatedAt
+
+  currentProgramId String?       @db.Uuid
+  currentProgram   Program?      @relation(fields: [currentProgramId], references: [id], onDelete: SetNull)
+
+  machineId        String        @unique @db.Uuid
+  machine          Machine       @relation(fields: [machineId], references: [id], onDelete: Cascade)
+
+  @@map("machine_statuses")
+}
+
+model Machine {
+  id        String      @id @default(uuid()) @db.Uuid
+  name      String      @db.VarChar(50)
+  type      MachineType
+  price     Decimal     @db.Decimal(18, 2)
+
+  // Status (1-1)
+  machineStatus MachineStatus?
+
+  // Programs (N-N)
+  programs  Program[]
+
+  // Laundry (N-1)
+  laundryId String      @db.Uuid
+  laundry   Laundry     @relation(fields: [laundryId], references: [id], onDelete: Cascade)
+
+  personId String? @db.Uuid
+  person   Person? @relation(fields: [personId], references: [id], onDelete: SetNull)
+
+  @@map("machines")
+}
+
+model Person {
+  id        String     @id @default(uuid()) @db.Uuid
+  username  String     @db.VarChar(50)
+  personType PersonType
+
+  // Relations
+  laundries Laundry[]
+  machines  Machine[]
+
+  // 1–1 optionnel avec User (côté inverse)
+  user      User?
+
+  @@map("persons")
+}
+
+model Program {
+  id          String   @id @default(uuid()) @db.Uuid
+  name        String   @db.VarChar(50)
+
+  temperature Int
+  speed       Int
+  duration    Int      // minutes
+
+  machines    Machine[] // Many-to-Many
+  currentOnStatuses MachineStatus[]
+
+
+  @@map("programs")
+}
+
+model User {
+    id           String   @id @default(uuid()) @db.Uuid
+    email        String   @unique @db.VarChar(100)
+    passwordHash String   @db.VarChar(255)
+    createdAt    DateTime @default(now())
+
+    // Relation optionnelle vers Person
+    personId     String?  @unique @db.Uuid
+    person       Person?  @relation(fields: [personId], references: [id], onDelete: SetNull)
+
+    @@map("users")
 }

@@ -1,0 +1,14 @@
+model Person {
+  id        String     @id @default(uuid()) @db.Uuid
+  username  String     @db.VarChar(50)
+  personType PersonType
+
+  // Relations
+  laundries Laundry[]
+  machines  Machine[]
+
+  // 1–1 optionnel avec User (côté inverse)
+  user      User?
+
+  @@map("persons")
+}
