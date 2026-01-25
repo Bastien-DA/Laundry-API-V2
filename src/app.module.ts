@@ -4,6 +4,7 @@ import { validateEnv } from './core/config/env.validation';
 import { AuthModule } from './features/auth/auth.module';
 import {RequestLoggerMiddleware} from "./core/middlewares/request-logger.middleware";
 import {DatabaseModule} from "./core/database/database.module";
+import {LaundriesModule} from "./features/laundries/laundries.module";
 
 @Module({
   imports: [
@@ -13,6 +14,7 @@ import {DatabaseModule} from "./core/database/database.module";
     }),
     AuthModule,
     DatabaseModule,
+      LaundriesModule,
   ],
 })
 export class AppModule implements NestModule {
