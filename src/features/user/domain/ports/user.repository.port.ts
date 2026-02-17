@@ -10,6 +10,7 @@ export type UserFilter = {
 
 export type CreateUserCommand = {
   email: string;
+  passwordHash: string;
   personId?: string | null;
 };
 

@@ -1,4 +1,4 @@
-import { ListParams } from '../../application/types/list-params';
+import { ListParams } from '@shared/application/types/list-params';
 
 export type Sort = { field: string; direction: 'asc' | 'desc' };
 

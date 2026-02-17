@@ -1,58 +1,29 @@
-import { Prisma } from '@prisma/client';
-import { PrismaService as AppPrismaService } from '@core/database/prisma.service';
-import { PrismaAbstractRepository } from '@shared/infrastructure/prisma/prisma-abstract.repository';
+import { PrismaService } from '@core/database/prisma.service';
 import { UserEntity } from '@features/user/domain/entities/user.entity';
 import {
   CreateUserCommand,
   EditUserCommand,
   UserFilter,
+  UserRepository,
 } from '@features/user/domain/ports/user.repository.port';
 
-type Sort = { field: string; direction: 'asc' | 'desc' };
+type Sort = { field: 'createdAt' | 'email'; direction: 'asc' | 'desc' };
 
-// Payload minimal : scalaires + relation Person uniquement avec son id
-type UserRow = Prisma.UserGetPayload<{
-  select: {
-    id: true;
-    email: true;
-    createdAt: true;
-    personId: true;
-    person: { select: { id: true } };
-  };
-}>;
+export class PrismaUserRepository implements UserRepository {
+  constructor(private readonly prisma: PrismaService) {}
 
-export class PrismaUserRepository extends PrismaAbstractRepository<
-  UserEntity,
-  string,
-  CreateUserCommand,
-  EditUserCommand,
-  UserFilter,
-  UserRow,
-  Prisma.UserWhereInput,
-  Prisma.UserCreateInput,
-  Prisma.UserUpdateInput,
-  Prisma.UserOrderByWithRelationInput
-> {
-  // Delegate Prisma model
-  protected delegate: AppPrismaService['user'];
-
-  constructor(private readonly prisma: AppPrismaService) {
-    super();
-    this.delegate = prisma.user;
+  private toEntity(row: any): UserEntity {
+    // ✅ Person est 0..1, mais côté User tu as déjà personId en scalar
+    return new UserEntity(
+        row.id,
+        row.email,
+        row.createdAt,
+        row.personId ?? null,
+    );
   }
 
-  protected whereId(id: string) {
-    return { id };
-  }
-
-  protected toEntity(row: UserRow): UserEntity {
-    // Person est optionnelle (0..1)
-    const personId = row.person?.id ?? row.personId ?? null;
-    return new UserEntity(row.id, row.email, row.createdAt, personId);
-  }
-
-  protected buildWhere(filter?: UserFilter): Prisma.UserWhereInput {
-    const where: Prisma.UserWhereInput = {};
+  private buildWhere(filter?: UserFilter): any {
+    const where: any = {};
     if (!filter) return where;
 
     if (filter.emailContains) {
@@ -67,69 +38,29 @@ export class PrismaUserRepository extends PrismaAbstractRepository<
     return where;
   }
 
-  protected buildOrderBy(sort?: Sort): Prisma.UserOrderByWithRelationInput {
+  private buildOrderBy(sort?: Sort): any {
     if (!sort) return { createdAt: 'desc' };
-
-    // Whitelist (évite de laisser trier sur n'importe quel champ)
-    const allowed = new Set(['createdAt', 'email']);
-    if (!allowed.has(sort.field)) return { createdAt: 'desc' };
-
-    return {
-      [sort.field]: sort.direction,
-    } as Prisma.UserOrderByWithRelationInput;
+    return { [sort.field]: sort.direction };
   }
 
-  protected toCreateInput(cmd: CreateUserCommand): Prisma.UserCreateInput {
-    return {
-      email: cmd.email,
-
-      // ✅ Auth gère passwordHash => on n'y touche pas ici
-      // Relation 1–1 optionnelle : connect via id
-      ...(cmd.personId ? { person: { connect: { id: cmd.personId } } } : {}),
-    };
-  }
-
-  protected toUpdateInput(cmd: EditUserCommand): Prisma.UserUpdateInput {
-    const personIdProvided = cmd.personId !== undefined;
-
-    return {
-      ...(cmd.email !== undefined ? { email: cmd.email } : {}),
-
-      // ✅ Auth gère passwordHash => on n'y touche pas ici
-      ...(personIdProvided
-        ? cmd.personId
-          ? { person: { connect: { id: cmd.personId } } }
-          : { person: { disconnect: true } }
-        : {}),
-    };
-  }
-
-  /**
-   * findById avec select minimal (IDs only)
-   */
   async findById(id: string): Promise<UserEntity | null> {
-    const row = await this.delegate.findUnique({
-      where: this.whereId(id),
+    const row = await this.prisma.user.findUnique({
+      where: { id },
+      // ✅ pas besoin d'include person, on veut seulement personId
+      // ✅ et surtout pas de passwordHash
       select: {
         id: true,
         email: true,
         createdAt: true,
         personId: true,
-        person: { select: { id: true } },
       },
     });
 
-    return row ? this.toEntity(row as UserRow) : null;
+    return row ? this.toEntity(row) : null;
   }
 
-  /**
-   * findMany avec select minimal + where + orderBy
-   */
-  async findMany(params?: {
-    filter?: UserFilter;
-    sort?: Sort;
-  }): Promise<UserEntity[]> {
-    const rows = await this.delegate.findMany({
+  async findMany(params?: { filter?: UserFilter; sort?: Sort }): Promise<UserEntity[]> {
+    const rows = await this.prisma.user.findMany({
       where: this.buildWhere(params?.filter),
       orderBy: this.buildOrderBy(params?.sort),
       select: {
@@ -137,58 +68,57 @@ export class PrismaUserRepository extends PrismaAbstractRepository<
         email: true,
         createdAt: true,
         personId: true,
-        person: { select: { id: true } },
       },
     });
 
-    return rows.map((r) => this.toEntity(r as UserRow));
+    return rows.map((r: any) => this.toEntity(r));
   }
 
-  /**
-   * create (ne touche pas passwordHash)
-   */
-  async create(data: CreateUserCommand): Promise<UserEntity> {
-    const input = this.toCreateInput(data);
-
-    const row = await this.delegate.create({
-      data: input,
+  async create(cmd: CreateUserCommand): Promise<UserEntity> {
+    const row = await this.prisma.user.create({
+      data: {
+        email: cmd.email,
+        passwordHash: cmd.passwordHash,
+        // ✅ Auth gère passwordHash => on n'y touche jamais ici
+        ...(cmd.personId ? { person: { connect: { id: cmd.personId } } } : {}),
+      },
       select: {
         id: true,
         email: true,
         createdAt: true,
         personId: true,
-        person: { select: { id: true } },
       },
     });
 
-    return this.toEntity(row as UserRow);
+    return this.toEntity(row);
   }
 
-  /**
-   * update (ne touche pas passwordHash)
-   */
-  async update(id: string, data: EditUserCommand): Promise<UserEntity> {
-    const input = this.toUpdateInput(data);
+  async update(id: string, cmd: EditUserCommand): Promise<UserEntity> {
+    const personIdProvided = cmd.personId !== undefined;
 
-    const row = await this.delegate.update({
-      where: this.whereId(id),
-      data: input,
+    const row = await this.prisma.user.update({
+      where: { id },
+      data: {
+        ...(cmd.email !== undefined ? { email: cmd.email } : {}),
+
+        ...(personIdProvided
+            ? cmd.personId
+                ? { person: { connect: { id: cmd.personId } } }
+                : { person: { disconnect: true } }
+            : {}),
+      },
       select: {
         id: true,
         email: true,
         createdAt: true,
         personId: true,
-        person: { select: { id: true } },
       },
     });
 
-    return this.toEntity(row as UserRow);
+    return this.toEntity(row);
   }
 
-  /**
-   * delete
-   */
   async delete(id: string): Promise<void> {
-    await this.delegate.delete({ where: this.whereId(id) });
+    await this.prisma.user.delete({ where: { id } });
   }
 }

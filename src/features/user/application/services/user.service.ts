@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import {Inject, Injectable} from '@nestjs/common';
 import { UserMapper } from '@features/user/application/mappers/user.mapper';
 import { AbstractService } from '@shared/application/services/abstract.service';
 import { UserEntity } from '@features/user/domain/entities/user.entity';
@@ -7,6 +7,7 @@ import { CreateUserDto } from '@features/user/interface/http/dtos/create-user.dt
 import { EditUserDto } from '@features/user/interface/http/dtos/edit-user.dto';
 import { UserFilterDto } from '@features/user/interface/http/dtos/user-filter.dto';
 import { PrismaUserRepository } from '@features/user/infrastructure/prisma/user.prisma-repository';
+import {UserRepository} from "@features/user/domain/ports/user.repository.port";
 
 @Injectable()
 export class UserService extends AbstractService<
@@ -17,7 +18,7 @@ export class UserService extends AbstractService<
   EditUserDto,
   UserFilterDto
 > {
-  constructor(repo: PrismaUserRepository, mapper: UserMapper) {
+  constructor(@Inject('UserRepository') repo: UserRepository, mapper: UserMapper) {
     super(repo, mapper);
   }
 }

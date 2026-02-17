@@ -1,7 +1,7 @@
 import { NotFoundException } from '@nestjs/common';
-import { ListParams } from '../types/list-params';
-import { AbstractMapper } from '../mappers/abstract.mapper';
-import { AbstractRepository } from '../../domain/ports/abstract.repository';
+import { ListParams } from '@shared/application/types/list-params';
+import { AbstractMapper } from '@shared/application/mappers/abstract.mapper';
+import { AbstractRepository } from '@shared//domain/ports/abstract.repository';
 
 export abstract class AbstractService<
   TEntity,
