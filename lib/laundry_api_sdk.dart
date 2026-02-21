@@ -11,6 +11,9 @@ export 'package:laundry_api_sdk/src/auth/oauth.dart';
 
 export 'package:laundry_api_sdk/src/api/auth_api.dart';
 export 'package:laundry_api_sdk/src/api/laundry_api.dart';
+export 'package:laundry_api_sdk/src/api/machine_api.dart';
+export 'package:laundry_api_sdk/src/api/person_api.dart';
+export 'package:laundry_api_sdk/src/api/program_api.dart';
 export 'package:laundry_api_sdk/src/api/user_api.dart';
 
 

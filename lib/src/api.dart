@@ -9,6 +9,9 @@ import 'package:laundry_api_sdk/src/auth/bearer_auth.dart';
 import 'package:laundry_api_sdk/src/auth/oauth.dart';
 import 'package:laundry_api_sdk/src/api/auth_api.dart';
 import 'package:laundry_api_sdk/src/api/laundry_api.dart';
+import 'package:laundry_api_sdk/src/api/machine_api.dart';
+import 'package:laundry_api_sdk/src/api/person_api.dart';
+import 'package:laundry_api_sdk/src/api/program_api.dart';
 import 'package:laundry_api_sdk/src/api/user_api.dart';
 
 class LaundryApiSdk {
@@ -72,6 +75,24 @@ class LaundryApiSdk {
   /// by doing that all interceptors will not be executed
   LaundryApi getLaundryApi() {
     return LaundryApi(dio);
+  }
+
+  /// Get MachineApi instance, base route and serializer can be overridden by a given but be careful,
+  /// by doing that all interceptors will not be executed
+  MachineApi getMachineApi() {
+    return MachineApi(dio);
+  }
+
+  /// Get PersonApi instance, base route and serializer can be overridden by a given but be careful,
+  /// by doing that all interceptors will not be executed
+  PersonApi getPersonApi() {
+    return PersonApi(dio);
+  }
+
+  /// Get ProgramApi instance, base route and serializer can be overridden by a given but be careful,
+  /// by doing that all interceptors will not be executed
+  ProgramApi getProgramApi() {
+    return ProgramApi(dio);
   }
 
   /// Get UserApi instance, base route and serializer can be overridden by a given but be careful,
