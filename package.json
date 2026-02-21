@@ -18,7 +18,7 @@
     "prisma:generate": "npm run prisma:build && prisma generate",
     "prisma:migrate": "npm run prisma:generate && prisma migrate dev",
     "prisma:studio": "npm run prisma:build && prisma studio",
-    "start:dev": "npm run prisma:generate && nest start --watch"
+    "start:dev": "npm run prisma:generate && npx nest start --watch"
   },
   "dependencies": {
     "@nestjs/common": "^11.0.1",
