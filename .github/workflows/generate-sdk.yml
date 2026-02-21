@@ -27,8 +27,9 @@ jobs:
           --health-timeout=5s
           --health-retries=20
 
+    # ⚠️ Important: ne pas forcer NODE_ENV=production ici,
+    # sinon npm peut omettre les devDependencies (dont @nestjs/cli)
     env:
-      NODE_ENV: production
       PORT: "3000"
       DATABASE_URL: postgresql://postgres:postgres@localhost:5432/app?schema=public
       JWT_SECRET: "change_me_change_me_change_me_123456"
@@ -44,13 +45,15 @@ jobs:
           node-version: "20"
           cache: "npm"
 
-      - name: Install dependencies
-        run: npm ci
+      - name: Install dependencies (include dev)
+        run: npm ci --include=dev
 
-      # Rend la CI robuste même si @nestjs/cli / prisma ne sont pas dans les deps
-      - name: Ensure Nest & Prisma CLIs are available
+      # Debug utile pour confirmer que nest/prisma existent bien
+      - name: Debug - show local bins
         run: |
-          npm i -D @nestjs/cli prisma
+          ls -lah node_modules/.bin | grep -E 'nest|prisma|tsc' || true
+          node -v
+          npm -v
 
       - name: Prisma generate
         run: |
@@ -69,17 +72,17 @@ jobs:
           fi
 
       - name: Build API
-        run: npx nest build
+        run: npm run build
 
       - name: Run API (background)
+        env:
+          NODE_ENV: production
         run: |
           set -euxo pipefail
 
           node dist/main.js &
           echo $! > api.pid
 
-          # Ton main.ts expose swagger via SwaggerModule.setup('docs', ...)
-          # Sans useGlobalPrefix, c'est généralement /docs-json
           CANDIDATES=(
             "http://localhost:3000/docs-json"
             "http://localhost:3000/api/docs-json"
@@ -101,7 +104,6 @@ jobs:
           if [ -z "$FOUND" ]; then
             echo "Swagger JSON introuvable. Tentatives:"
             printf '%s\n' "${CANDIDATES[@]}"
-            echo "Process:"
             ps aux | grep "node dist/main.js" || true
             exit 1
           fi
@@ -150,14 +152,12 @@ jobs:
         run: |
           set -euxo pipefail
 
-          # Force SDK constraint
           if grep -q "^environment:" pubspec.yaml; then
             sed -i 's/^  sdk: .*/  sdk: ">=3.8.0 <4.0.0"/' pubspec.yaml || true
           else
             printf '\nenvironment:\n  sdk: ">=3.8.0 <4.0.0"\n' >> pubspec.yaml
           fi
 
-          # Force json_annotation (si présent)
           if grep -q "^  json_annotation:" pubspec.yaml; then
             sed -i 's/^  json_annotation: .*/  json_annotation: ^4.9.0/' pubspec.yaml
           fi
