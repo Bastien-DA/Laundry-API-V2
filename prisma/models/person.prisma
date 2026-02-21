@@ -7,9 +7,7 @@ model Person {
   laundries Laundry[]
   machines  Machine[]
 
-  // 1–1 optionnel avec User (côté inverse)
-  userId     String?    @unique @db.Uuid
-  user       User?      @relation(fields: [userId], references: [id], onDelete: SetNull)
+  user       User?
 
   @@map("persons")
 }
