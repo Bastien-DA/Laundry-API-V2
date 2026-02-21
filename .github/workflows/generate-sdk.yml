@@ -27,8 +27,7 @@ jobs:
           --health-timeout=5s
           --health-retries=20
 
-    # ⚠️ Important: ne pas forcer NODE_ENV=production ici,
-    # sinon npm peut omettre les devDependencies (dont @nestjs/cli)
+    # ⚠️ Ne pas mettre NODE_ENV=production ici (sinon devDependencies parfois omises)
     env:
       PORT: "3000"
       DATABASE_URL: postgresql://postgres:postgres@localhost:5432/app?schema=public
@@ -48,20 +47,10 @@ jobs:
       - name: Install dependencies (include dev)
         run: npm ci --include=dev
 
-      # Debug utile pour confirmer que nest/prisma existent bien
-      - name: Debug - show local bins
-        run: |
-          ls -lah node_modules/.bin | grep -E 'nest|prisma|tsc' || true
-          node -v
-          npm -v
-
       - name: Prisma generate
         run: |
-          if [ -f prisma/schema.prisma ] || [ -f prisma.config.ts ]; then
-            npx prisma generate --config prisma.config.ts || npx prisma generate
-          else
-            echo "No Prisma detected, skipping"
-          fi
+          # Prisma est dans deps chez toi, donc OK
+          npx prisma generate --config prisma.config.ts || npx prisma generate
 
       - name: Prisma migrate (CI database)
         run: |
@@ -83,38 +72,25 @@ jobs:
           node dist/main.js &
           echo $! > api.pid
 
-          CANDIDATES=(
-            "http://localhost:3000/docs-json"
-            "http://localhost:3000/api/docs-json"
-            "http://localhost:3000/api/v1/docs-json"
-          )
+          SWAGGER_URL="http://localhost:3000/docs-json"
 
-          FOUND=""
+          # attendre que swagger soit prêt
           for i in {1..45}; do
-            for url in "${CANDIDATES[@]}"; do
-              if curl -sSf "$url" >/dev/null 2>&1; then
-                FOUND="$url"
-                break
-              fi
-            done
-            [ -n "$FOUND" ] && break
+            if curl -sSf "$SWAGGER_URL" >/dev/null 2>&1; then
+              echo "SWAGGER_JSON_URL=$SWAGGER_URL" >> "$GITHUB_ENV"
+              echo "Swagger OK at: $SWAGGER_URL"
+              exit 0
+            fi
             sleep 2
           done
 
-          if [ -z "$FOUND" ]; then
-            echo "Swagger JSON introuvable. Tentatives:"
-            printf '%s\n' "${CANDIDATES[@]}"
-            ps aux | grep "node dist/main.js" || true
-            exit 1
-          fi
-
-          echo "SWAGGER_JSON_URL=$FOUND" >> "$GITHUB_ENV"
-          echo "Swagger OK at: $FOUND"
+          echo "Swagger JSON introuvable sur $SWAGGER_URL"
+          ps aux | grep "node dist/main.js" || true
+          exit 1
 
       - name: Download swagger.json
         run: |
           set -euxo pipefail
-          echo "Downloading from: $SWAGGER_JSON_URL"
           curl -sSf "$SWAGGER_JSON_URL" -o swagger.json
           ls -lah swagger.json
 
