@@ -1,6 +1,0 @@
-enum MachineStatusEnum {
-  AVAILABLE
-  RUNNING
-  PAUSED
-  OUT_OF_ORDER
-}
