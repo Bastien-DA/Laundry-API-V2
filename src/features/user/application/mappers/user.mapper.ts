@@ -26,6 +26,7 @@ export class UserMapper implements AbstractMapper<
   fromCreateDto(dto: CreateUserDto): CreateUserCommand {
     return {
       email: dto.email,
+      passwordHash: '',
       personId: dto.personId ?? null,
     };
   }

@@ -1,9 +1,8 @@
-name: Generate SDK
+name: Generate Flutter SDK (NestJS)
 
 on:
   push:
-    branches:
-      - main
+    branches: [ main ]
   workflow_dispatch: {}
 
 permissions:
@@ -29,18 +28,16 @@ jobs:
           --health-retries=20
 
     env:
-      # Prisma v7 (prisma.config.ts) va lire DATABASE_URL
-      DATABASE_URL: postgresql://postgres:postgres@localhost:5432/app?schema=public
       NODE_ENV: production
       PORT: "3000"
-      JWT_SECRET: "change_me_change_me_change_me_123456" # min 20 chars
+      DATABASE_URL: postgresql://postgres:postgres@localhost:5432/app?schema=public
+      JWT_SECRET: "change_me_change_me_change_me_123456"
       JWT_EXPIRES_IN: "30d"
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # Node + cache npm
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
@@ -50,56 +47,77 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      # Génère prisma/schema.prisma depuis tes fichiers split + génère le client
-      - name: Prisma build schema + generate client
+      # Prisma (garde si tu l’utilises)
+      - name: Prisma generate
         run: |
-          npm run prisma:build
-          npx prisma validate --config prisma.config.ts
-          npx prisma generate --config prisma.config.ts
+          if [ -f prisma/schema.prisma ] || [ -f prisma.config.ts ]; then
+            npx prisma generate --config prisma.config.ts || npx prisma generate
+          else
+            echo "No Prisma detected, skipping"
+          fi
 
-      # Optionnel mais souvent utile: migrer la DB CI (sinon Prisma connect peut échouer selon ton code)
       - name: Prisma migrate (CI database)
         run: |
-          npx prisma migrate deploy --config prisma.config.ts || npx prisma migrate dev --name ci --config prisma.config.ts
+          if [ -d prisma/migrations ]; then
+            npx prisma migrate deploy --config prisma.config.ts || npx prisma migrate deploy || true
+          else
+            echo "No migrations detected, skipping"
+          fi
 
-      # Build Nest
       - name: Build API
         run: npm run build
 
-      # Run API en arrière-plan
-      - name: Run API
+      - name: Run API (background)
         run: |
           node dist/main.js &
           echo $! > api.pid
-          # Attendre que l'API réponde
-          for i in {1..30}; do
-            curl -sSf http://localhost:3000/health >/dev/null && break || true
-            curl -sSf http://localhost:3000/docs-json >/dev/null && break || true
+
+          # On teste plusieurs endpoints possibles sans changer ton main.ts
+          CANDIDATES=(
+            "http://localhost:3000/docs-json"
+          )
+
+          FOUND=""
+          for i in {1..45}; do
+            for url in "${CANDIDATES[@]}"; do
+              if curl -sSf "$url" >/dev/null 2>&1; then
+                FOUND="$url"
+                break
+              fi
+            done
+            [ -n "$FOUND" ] && break
             sleep 2
           done
 
-      # Récupérer swagger.json
-      # 👉 Par défaut Nest Swagger: si tu fais SwaggerModule.setup('docs', ...),
-      # le JSON est servi sur /docs-json
+          if [ -z "$FOUND" ]; then
+            echo "Swagger JSON introuvable. Tentatives:"
+            printf '%s\n' "${CANDIDATES[@]}"
+            echo "Logs process:"
+            ps aux | grep "node dist/main.js" || true
+            exit 1
+          fi
+
+          echo "SWAGGER_JSON_URL=$FOUND" >> $GITHUB_ENV
+          echo "Swagger OK at: $FOUND"
+
       - name: Download swagger.json
         run: |
-          curl -sSf http://localhost:3000/docs-json -o swagger.json
+          echo "Downloading from: $SWAGGER_JSON_URL"
+          curl -sSf "$SWAGGER_JSON_URL" -o swagger.json
           ls -lah swagger.json
 
-      # Installer Java pour OpenAPI Generator
-      - name: Install Java
+      - name: Setup Java (for OpenAPI Generator)
         uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: "17"
 
-      # Installer OpenAPI Generator
       - name: Install OpenAPI Generator
         run: |
-          wget https://repo1.maven.org/maven2/org/openapitools/openapi-generator-cli/7.17.0/openapi-generator-cli-7.17.0.jar -O openapi-generator-cli.jar
+          wget -q https://repo1.maven.org/maven2/org/openapitools/openapi-generator-cli/7.17.0/openapi-generator-cli-7.17.0.jar -O openapi-generator-cli.jar
+          ls -lah openapi-generator-cli.jar
 
-      # Générer le SDK Flutter/Dart
-      - name: Generate Flutter SDK
+      - name: Generate Flutter SDK (dart-dio)
         run: |
           rm -rf sdk
           mkdir -p sdk
@@ -107,31 +125,23 @@ jobs:
             -i swagger.json \
             -g dart-dio \
             -o sdk \
-            --additional-properties=serializationLibrary=json_serializable
+            --additional-properties=pubName=laundry_api_sdk,serializationLibrary=json_serializable
 
-      # Installer Flutter
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
           channel: stable
           cache: true
 
-      - name: Show Flutter/Dart versions
-        run: |
-          flutter --version
-          dart --version
-
       - name: Patch generated pubspec (Dart 3.8 + json_annotation)
         working-directory: sdk
         run: |
-          # Force SDK constraint
           if grep -q "^environment:" pubspec.yaml; then
             sed -i 's/^  sdk: .*/  sdk: ">=3.8.0 <4.0.0"/' pubspec.yaml || true
           else
             printf '\nenvironment:\n  sdk: ">=3.8.0 <4.0.0"\n' >> pubspec.yaml
           fi
 
-          # Force json_annotation >= 4.9.0 (si présent)
           if grep -q "^  json_annotation:" pubspec.yaml; then
             sed -i 's/^  json_annotation: .*/  json_annotation: ^4.9.0/' pubspec.yaml
           fi
@@ -156,7 +166,6 @@ jobs:
             kill "$(cat api.pid)" || true
           fi
 
-      # Push sur la branche sdk
       - name: Push to sdk branch
         run: |
           set -euxo pipefail

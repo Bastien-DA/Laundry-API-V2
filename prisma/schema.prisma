@@ -91,7 +91,8 @@ model Person {
   machines  Machine[]
 
   // 1–1 optionnel avec User (côté inverse)
-  user      User?
+  userId     String?    @unique @db.Uuid
+  user       User?      @relation(fields: [userId], references: [id], onDelete: SetNull)
 
   @@map("persons")
 }
