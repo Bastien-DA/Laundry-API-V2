@@ -47,7 +47,11 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      # Prisma (garde si tu l’utilises)
+      # Rend la CI robuste même si @nestjs/cli / prisma ne sont pas dans les deps
+      - name: Ensure Nest & Prisma CLIs are available
+        run: |
+          npm i -D @nestjs/cli prisma
+
       - name: Prisma generate
         run: |
           if [ -f prisma/schema.prisma ] || [ -f prisma.config.ts ]; then
@@ -65,16 +69,21 @@ jobs:
           fi
 
       - name: Build API
-        run: npm run build
+        run: npx nest build
 
       - name: Run API (background)
         run: |
+          set -euxo pipefail
+
           node dist/main.js &
           echo $! > api.pid
 
-          # On teste plusieurs endpoints possibles sans changer ton main.ts
+          # Ton main.ts expose swagger via SwaggerModule.setup('docs', ...)
+          # Sans useGlobalPrefix, c'est généralement /docs-json
           CANDIDATES=(
             "http://localhost:3000/docs-json"
+            "http://localhost:3000/api/docs-json"
+            "http://localhost:3000/api/v1/docs-json"
           )
 
           FOUND=""
@@ -92,16 +101,17 @@ jobs:
           if [ -z "$FOUND" ]; then
             echo "Swagger JSON introuvable. Tentatives:"
             printf '%s\n' "${CANDIDATES[@]}"
-            echo "Logs process:"
+            echo "Process:"
             ps aux | grep "node dist/main.js" || true
             exit 1
           fi
 
-          echo "SWAGGER_JSON_URL=$FOUND" >> $GITHUB_ENV
+          echo "SWAGGER_JSON_URL=$FOUND" >> "$GITHUB_ENV"
           echo "Swagger OK at: $FOUND"
 
       - name: Download swagger.json
         run: |
+          set -euxo pipefail
           echo "Downloading from: $SWAGGER_JSON_URL"
           curl -sSf "$SWAGGER_JSON_URL" -o swagger.json
           ls -lah swagger.json
@@ -114,11 +124,13 @@ jobs:
 
       - name: Install OpenAPI Generator
         run: |
+          set -euxo pipefail
           wget -q https://repo1.maven.org/maven2/org/openapitools/openapi-generator-cli/7.17.0/openapi-generator-cli-7.17.0.jar -O openapi-generator-cli.jar
           ls -lah openapi-generator-cli.jar
 
       - name: Generate Flutter SDK (dart-dio)
         run: |
+          set -euxo pipefail
           rm -rf sdk
           mkdir -p sdk
           java -jar openapi-generator-cli.jar generate \
@@ -136,12 +148,16 @@ jobs:
       - name: Patch generated pubspec (Dart 3.8 + json_annotation)
         working-directory: sdk
         run: |
+          set -euxo pipefail
+
+          # Force SDK constraint
           if grep -q "^environment:" pubspec.yaml; then
             sed -i 's/^  sdk: .*/  sdk: ">=3.8.0 <4.0.0"/' pubspec.yaml || true
           else
             printf '\nenvironment:\n  sdk: ">=3.8.0 <4.0.0"\n' >> pubspec.yaml
           fi
 
+          # Force json_annotation (si présent)
           if grep -q "^  json_annotation:" pubspec.yaml; then
             sed -i 's/^  json_annotation: .*/  json_annotation: ^4.9.0/' pubspec.yaml
           fi
@@ -151,11 +167,13 @@ jobs:
       - name: Flutter pub get + build_runner
         working-directory: sdk
         run: |
+          set -euxo pipefail
           flutter pub get
           flutter pub run build_runner build --delete-conflicting-outputs
 
       - name: Save SDK outside repo
         run: |
+          set -euxo pipefail
           rm -rf /tmp/sdk
           cp -r sdk /tmp/sdk
 
