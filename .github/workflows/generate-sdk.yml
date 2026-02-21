@@ -69,13 +69,21 @@ jobs:
         run: |
           set -euxo pipefail
 
-          node dist/main.js &
+          # Trouver le main.js compilé
+          MAIN_JS="$(find dist -type f -name 'main.js' | head -n 1 || true)"
+          if [ -z "$MAIN_JS" ]; then
+            echo "Aucun main.js trouvé dans dist/. Contenu dist/:"
+            ls -R dist || true
+            exit 1
+          fi
+
+          echo "Starting API with: node $MAIN_JS"
+          node "$MAIN_JS" &
           echo $! > api.pid
 
           SWAGGER_URL="http://localhost:3000/docs-json"
 
-          # attendre que swagger soit prêt
-          for i in {1..45}; do
+          for i in {1..60}; do
             if curl -sSf "$SWAGGER_URL" >/dev/null 2>&1; then
               echo "SWAGGER_JSON_URL=$SWAGGER_URL" >> "$GITHUB_ENV"
               echo "Swagger OK at: $SWAGGER_URL"
@@ -85,7 +93,9 @@ jobs:
           done
 
           echo "Swagger JSON introuvable sur $SWAGGER_URL"
-          ps aux | grep "node dist/main.js" || true
+          ps aux | grep "node" || true
+          echo "Dist tree:"
+          ls -R dist || true
           exit 1
 
       - name: Download swagger.json
