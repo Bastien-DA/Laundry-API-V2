@@ -6,6 +6,9 @@ import { RequestLoggerMiddleware } from '@core/middlewares/request-logger.middle
 import { DatabaseModule } from '@core/database/database.module';
 import { LaundryModule } from '@features/laundry/laundry.module';
 import { UserModule } from '@features/user/user.module';
+import {MachineModule} from "@features/machine/machine.module";
+import {ProgramModule} from "@features/program/program.module";
+import {PersonModule} from "@features/person/person.module";
 
 @Module({
   imports: [
@@ -16,6 +19,9 @@ import { UserModule } from '@features/user/user.module';
     AuthModule,
     DatabaseModule,
     LaundryModule,
+      MachineModule,
+      ProgramModule,
+      PersonModule,
     UserModule,
   ],
 })
