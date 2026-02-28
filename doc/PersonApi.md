@@ -17,7 +17,7 @@ Method | HTTP request | Description
 
 
 # **personControllerCreateV1**
-> personControllerCreateV1(body)
+> personControllerCreateV1(createPersonDto)
 
 
 
@@ -26,10 +26,10 @@ Method | HTTP request | Description
 import 'package:laundry_api_sdk/api.dart';
 
 final api = LaundryApiSdk().getPersonApi();
-final Object body = Object; // Object | 
+final CreatePersonDto createPersonDto = ; // CreatePersonDto | 
 
 try {
-    api.personControllerCreateV1(body);
+    api.personControllerCreateV1(createPersonDto);
 } catch on DioException (e) {
     print('Exception when calling PersonApi->personControllerCreateV1: $e\n');
 }
@@ -39,7 +39,7 @@ try {
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **body** | **Object**|  | 
+ **createPersonDto** | [**CreatePersonDto**](CreatePersonDto.md)|  | 
 
 ### Return type
 
@@ -57,7 +57,7 @@ No authorization required
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
 # **personControllerEditV1**
-> personControllerEditV1(id, body)
+> personControllerEditV1(id, editPersonDto)
 
 
 
@@ -67,10 +67,10 @@ import 'package:laundry_api_sdk/api.dart';
 
 final api = LaundryApiSdk().getPersonApi();
 final String id = id_example; // String | 
-final Object body = Object; // Object | 
+final EditPersonDto editPersonDto = ; // EditPersonDto | 
 
 try {
-    api.personControllerEditV1(id, body);
+    api.personControllerEditV1(id, editPersonDto);
 } catch on DioException (e) {
     print('Exception when calling PersonApi->personControllerEditV1: $e\n');
 }
@@ -81,7 +81,7 @@ try {
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
  **id** | **String**|  | 
- **body** | **Object**|  | 
+ **editPersonDto** | [**EditPersonDto**](EditPersonDto.md)|  | 
 
 ### Return type
 
@@ -139,7 +139,7 @@ No authorization required
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
 # **personControllerListV1**
-> personControllerListV1()
+> personControllerListV1(usernameContains, personType, laundryId, machineId, hasUser, userId)
 
 
 
@@ -148,16 +148,30 @@ No authorization required
 import 'package:laundry_api_sdk/api.dart';
 
 final api = LaundryApiSdk().getPersonApi();
+final String usernameContains = usernameContains_example; // String | 
+final String personType = personType_example; // String | 
+final String laundryId = laundryId_example; // String | 
+final String machineId = machineId_example; // String | 
+final bool hasUser = true; // bool | 
+final String userId = userId_example; // String | 
 
 try {
-    api.personControllerListV1();
+    api.personControllerListV1(usernameContains, personType, laundryId, machineId, hasUser, userId);
 } catch on DioException (e) {
     print('Exception when calling PersonApi->personControllerListV1: $e\n');
 }
 ```
 
 ### Parameters
-This endpoint does not need any parameter.
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **usernameContains** | **String**|  | [optional] 
+ **personType** | **String**|  | [optional] 
+ **laundryId** | **String**|  | [optional] 
+ **machineId** | **String**|  | [optional] 
+ **hasUser** | **bool**|  | [optional] 
+ **userId** | **String**|  | [optional] 
 
 ### Return type
 

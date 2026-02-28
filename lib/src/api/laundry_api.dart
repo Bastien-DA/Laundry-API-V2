@@ -9,6 +9,8 @@ import 'dart:convert';
 import 'package:laundry_api_sdk/src/deserialize.dart';
 import 'package:dio/dio.dart';
 
+import 'package:laundry_api_sdk/src/model/create_laundry_dto.dart';
+import 'package:laundry_api_sdk/src/model/edit_laundry_dto.dart';
 
 class LaundryApi {
 
@@ -20,7 +22,7 @@ class LaundryApi {
   /// 
   ///
   /// Parameters:
-  /// * [body] 
+  /// * [createLaundryDto] 
   /// * [cancelToken] - A [CancelToken] that can be used to cancel the operation
   /// * [headers] - Can be used to add additional headers to the request
   /// * [extras] - Can be used to add flags to the request
@@ -31,7 +33,7 @@ class LaundryApi {
   /// Returns a [Future]
   /// Throws [DioException] if API call or serialization fails
   Future<Response<void>> laundryControllerCreateV1({ 
-    required Object body,
+    required CreateLaundryDto createLaundryDto,
     CancelToken? cancelToken,
     Map<String, dynamic>? headers,
     Map<String, dynamic>? extra,
@@ -56,7 +58,7 @@ class LaundryApi {
     dynamic _bodyData;
 
     try {
-_bodyData=jsonEncode(body);
+_bodyData=jsonEncode(createLaundryDto);
     } catch(error, stackTrace) {
       throw DioException(
          requestOptions: _options.compose(
@@ -86,7 +88,7 @@ _bodyData=jsonEncode(body);
   ///
   /// Parameters:
   /// * [id] 
-  /// * [body] 
+  /// * [editLaundryDto] 
   /// * [cancelToken] - A [CancelToken] that can be used to cancel the operation
   /// * [headers] - Can be used to add additional headers to the request
   /// * [extras] - Can be used to add flags to the request
@@ -98,7 +100,7 @@ _bodyData=jsonEncode(body);
   /// Throws [DioException] if API call or serialization fails
   Future<Response<void>> laundryControllerEditV1({ 
     required String id,
-    required Object body,
+    required EditLaundryDto editLaundryDto,
     CancelToken? cancelToken,
     Map<String, dynamic>? headers,
     Map<String, dynamic>? extra,
@@ -123,7 +125,7 @@ _bodyData=jsonEncode(body);
     dynamic _bodyData;
 
     try {
-_bodyData=jsonEncode(body);
+_bodyData=jsonEncode(editLaundryDto);
     } catch(error, stackTrace) {
       throw DioException(
          requestOptions: _options.compose(
@@ -199,6 +201,9 @@ _bodyData=jsonEncode(body);
   /// 
   ///
   /// Parameters:
+  /// * [nameContains] 
+  /// * [personId] 
+  /// * [machineId] 
   /// * [cancelToken] - A [CancelToken] that can be used to cancel the operation
   /// * [headers] - Can be used to add additional headers to the request
   /// * [extras] - Can be used to add flags to the request
@@ -209,6 +214,9 @@ _bodyData=jsonEncode(body);
   /// Returns a [Future]
   /// Throws [DioException] if API call or serialization fails
   Future<Response<void>> laundryControllerListV1({ 
+    String? nameContains,
+    String? personId,
+    String? machineId,
     CancelToken? cancelToken,
     Map<String, dynamic>? headers,
     Map<String, dynamic>? extra,
@@ -229,9 +237,16 @@ _bodyData=jsonEncode(body);
       validateStatus: validateStatus,
     );
 
+    final _queryParameters = <String, dynamic>{
+      if (nameContains != null) r'nameContains': nameContains,
+      if (personId != null) r'personId': personId,
+      if (machineId != null) r'machineId': machineId,
+    };
+
     final _response = await _dio.request<Object>(
       _path,
       options: _options,
+      queryParameters: _queryParameters,
       cancelToken: cancelToken,
       onSendProgress: onSendProgress,
       onReceiveProgress: onReceiveProgress,

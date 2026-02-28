@@ -49,10 +49,10 @@ import 'package:laundry_api_sdk/laundry_api_sdk.dart';
 
 
 final api = LaundryApiSdk().getAuthApi();
-final Object body = Object; // Object | 
+final LoginDto loginDto = ; // LoginDto | 
 
 try {
-    api.authControllerLoginV1(body);
+    api.authControllerLoginV1(loginDto);
 } catch on DioException (e) {
     print("Exception when calling AuthApi->authControllerLoginV1: $e\n");
 }
@@ -102,6 +102,17 @@ Class | Method | HTTP request | Description
 
 ## Documentation For Models
 
+ - [CreateLaundryDto](doc/CreateLaundryDto.md)
+ - [CreateMachineDto](doc/CreateMachineDto.md)
+ - [CreatePersonDto](doc/CreatePersonDto.md)
+ - [CreateProgramDto](doc/CreateProgramDto.md)
+ - [EditLaundryDto](doc/EditLaundryDto.md)
+ - [EditMachineDto](doc/EditMachineDto.md)
+ - [EditPersonDto](doc/EditPersonDto.md)
+ - [EditProgramDto](doc/EditProgramDto.md)
+ - [EditUserDto](doc/EditUserDto.md)
+ - [LoginDto](doc/LoginDto.md)
+ - [RegisterDto](doc/RegisterDto.md)
 
 
 ## Documentation For Authorization

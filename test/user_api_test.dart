@@ -7,7 +7,7 @@ void main() {
   final instance = LaundryApiSdk().getUserApi();
 
   group(UserApi, () {
-    //Future userControllerEditV1(String id, Object body) async
+    //Future userControllerEditV1(String id, EditUserDto editUserDto) async
     test('test userControllerEditV1', () async {
       // TODO
     });
@@ -17,7 +17,7 @@ void main() {
       // TODO
     });
 
-    //Future userControllerListV1() async
+    //Future userControllerListV1({ String emailContains, bool hasPerson, String personId }) async
     test('test userControllerListV1', () async {
       // TODO
     });

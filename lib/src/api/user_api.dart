@@ -9,6 +9,7 @@ import 'dart:convert';
 import 'package:laundry_api_sdk/src/deserialize.dart';
 import 'package:dio/dio.dart';
 
+import 'package:laundry_api_sdk/src/model/edit_user_dto.dart';
 
 class UserApi {
 
@@ -21,7 +22,7 @@ class UserApi {
   ///
   /// Parameters:
   /// * [id] 
-  /// * [body] 
+  /// * [editUserDto] 
   /// * [cancelToken] - A [CancelToken] that can be used to cancel the operation
   /// * [headers] - Can be used to add additional headers to the request
   /// * [extras] - Can be used to add flags to the request
@@ -33,7 +34,7 @@ class UserApi {
   /// Throws [DioException] if API call or serialization fails
   Future<Response<void>> userControllerEditV1({ 
     required String id,
-    required Object body,
+    required EditUserDto editUserDto,
     CancelToken? cancelToken,
     Map<String, dynamic>? headers,
     Map<String, dynamic>? extra,
@@ -58,7 +59,7 @@ class UserApi {
     dynamic _bodyData;
 
     try {
-_bodyData=jsonEncode(body);
+_bodyData=jsonEncode(editUserDto);
     } catch(error, stackTrace) {
       throw DioException(
          requestOptions: _options.compose(
@@ -134,6 +135,9 @@ _bodyData=jsonEncode(body);
   /// 
   ///
   /// Parameters:
+  /// * [emailContains] 
+  /// * [hasPerson] 
+  /// * [personId] 
   /// * [cancelToken] - A [CancelToken] that can be used to cancel the operation
   /// * [headers] - Can be used to add additional headers to the request
   /// * [extras] - Can be used to add flags to the request
@@ -144,6 +148,9 @@ _bodyData=jsonEncode(body);
   /// Returns a [Future]
   /// Throws [DioException] if API call or serialization fails
   Future<Response<void>> userControllerListV1({ 
+    String? emailContains,
+    bool? hasPerson,
+    String? personId,
     CancelToken? cancelToken,
     Map<String, dynamic>? headers,
     Map<String, dynamic>? extra,
@@ -164,9 +171,16 @@ _bodyData=jsonEncode(body);
       validateStatus: validateStatus,
     );
 
+    final _queryParameters = <String, dynamic>{
+      if (emailContains != null) r'emailContains': emailContains,
+      if (hasPerson != null) r'hasPerson': hasPerson,
+      if (personId != null) r'personId': personId,
+    };
+
     final _response = await _dio.request<Object>(
       _path,
       options: _options,
+      queryParameters: _queryParameters,
       cancelToken: cancelToken,
       onSendProgress: onSendProgress,
       onReceiveProgress: onReceiveProgress,

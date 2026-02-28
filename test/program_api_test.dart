@@ -7,12 +7,12 @@ void main() {
   final instance = LaundryApiSdk().getProgramApi();
 
   group(ProgramApi, () {
-    //Future programControllerCreateV1(Object body) async
+    //Future programControllerCreateV1(CreateProgramDto createProgramDto) async
     test('test programControllerCreateV1', () async {
       // TODO
     });
 
-    //Future programControllerEditV1(String id, Object body) async
+    //Future programControllerEditV1(String id, EditProgramDto editProgramDto) async
     test('test programControllerEditV1', () async {
       // TODO
     });
@@ -22,7 +22,7 @@ void main() {
       // TODO
     });
 
-    //Future programControllerListV1() async
+    //Future programControllerListV1({ String nameContains, String machineId }) async
     test('test programControllerListV1', () async {
       // TODO
     });

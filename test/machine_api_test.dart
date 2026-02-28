@@ -12,12 +12,12 @@ void main() {
       // TODO
     });
 
-    //Future machineControllerCreateV1(Object body) async
+    //Future machineControllerCreateV1(CreateMachineDto createMachineDto) async
     test('test machineControllerCreateV1', () async {
       // TODO
     });
 
-    //Future machineControllerEditV1(String id, Object body) async
+    //Future machineControllerEditV1(String id, EditMachineDto editMachineDto) async
     test('test machineControllerEditV1', () async {
       // TODO
     });
@@ -27,7 +27,7 @@ void main() {
       // TODO
     });
 
-    //Future machineControllerListV1() async
+    //Future machineControllerListV1({ String laundryId, String personId, String type, String programId }) async
     test('test machineControllerListV1', () async {
       // TODO
     });

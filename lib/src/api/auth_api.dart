@@ -9,6 +9,8 @@ import 'dart:convert';
 import 'package:laundry_api_sdk/src/deserialize.dart';
 import 'package:dio/dio.dart';
 
+import 'package:laundry_api_sdk/src/model/login_dto.dart';
+import 'package:laundry_api_sdk/src/model/register_dto.dart';
 
 class AuthApi {
 
@@ -20,7 +22,7 @@ class AuthApi {
   /// 
   ///
   /// Parameters:
-  /// * [body] 
+  /// * [loginDto] 
   /// * [cancelToken] - A [CancelToken] that can be used to cancel the operation
   /// * [headers] - Can be used to add additional headers to the request
   /// * [extras] - Can be used to add flags to the request
@@ -31,7 +33,7 @@ class AuthApi {
   /// Returns a [Future]
   /// Throws [DioException] if API call or serialization fails
   Future<Response<void>> authControllerLoginV1({ 
-    required Object body,
+    required LoginDto loginDto,
     CancelToken? cancelToken,
     Map<String, dynamic>? headers,
     Map<String, dynamic>? extra,
@@ -56,7 +58,7 @@ class AuthApi {
     dynamic _bodyData;
 
     try {
-_bodyData=jsonEncode(body);
+_bodyData=jsonEncode(loginDto);
     } catch(error, stackTrace) {
       throw DioException(
          requestOptions: _options.compose(
@@ -136,7 +138,7 @@ _bodyData=jsonEncode(body);
   /// 
   ///
   /// Parameters:
-  /// * [body] 
+  /// * [registerDto] 
   /// * [cancelToken] - A [CancelToken] that can be used to cancel the operation
   /// * [headers] - Can be used to add additional headers to the request
   /// * [extras] - Can be used to add flags to the request
@@ -147,7 +149,7 @@ _bodyData=jsonEncode(body);
   /// Returns a [Future]
   /// Throws [DioException] if API call or serialization fails
   Future<Response<void>> authControllerRegisterV1({ 
-    required Object body,
+    required RegisterDto registerDto,
     CancelToken? cancelToken,
     Map<String, dynamic>? headers,
     Map<String, dynamic>? extra,
@@ -172,7 +174,7 @@ _bodyData=jsonEncode(body);
     dynamic _bodyData;
 
     try {
-_bodyData=jsonEncode(body);
+_bodyData=jsonEncode(registerDto);
     } catch(error, stackTrace) {
       throw DioException(
          requestOptions: _options.compose(

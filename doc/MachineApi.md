@@ -63,7 +63,7 @@ No authorization required
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
 # **machineControllerCreateV1**
-> machineControllerCreateV1(body)
+> machineControllerCreateV1(createMachineDto)
 
 
 
@@ -72,10 +72,10 @@ No authorization required
 import 'package:laundry_api_sdk/api.dart';
 
 final api = LaundryApiSdk().getMachineApi();
-final Object body = Object; // Object | 
+final CreateMachineDto createMachineDto = ; // CreateMachineDto | 
 
 try {
-    api.machineControllerCreateV1(body);
+    api.machineControllerCreateV1(createMachineDto);
 } catch on DioException (e) {
     print('Exception when calling MachineApi->machineControllerCreateV1: $e\n');
 }
@@ -85,7 +85,7 @@ try {
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **body** | **Object**|  | 
+ **createMachineDto** | [**CreateMachineDto**](CreateMachineDto.md)|  | 
 
 ### Return type
 
@@ -103,7 +103,7 @@ No authorization required
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
 # **machineControllerEditV1**
-> machineControllerEditV1(id, body)
+> machineControllerEditV1(id, editMachineDto)
 
 
 
@@ -113,10 +113,10 @@ import 'package:laundry_api_sdk/api.dart';
 
 final api = LaundryApiSdk().getMachineApi();
 final String id = id_example; // String | 
-final Object body = Object; // Object | 
+final EditMachineDto editMachineDto = ; // EditMachineDto | 
 
 try {
-    api.machineControllerEditV1(id, body);
+    api.machineControllerEditV1(id, editMachineDto);
 } catch on DioException (e) {
     print('Exception when calling MachineApi->machineControllerEditV1: $e\n');
 }
@@ -127,7 +127,7 @@ try {
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
  **id** | **String**|  | 
- **body** | **Object**|  | 
+ **editMachineDto** | [**EditMachineDto**](EditMachineDto.md)|  | 
 
 ### Return type
 
@@ -185,7 +185,7 @@ No authorization required
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
 # **machineControllerListV1**
-> machineControllerListV1()
+> machineControllerListV1(laundryId, personId, type, programId)
 
 
 
@@ -194,16 +194,26 @@ No authorization required
 import 'package:laundry_api_sdk/api.dart';
 
 final api = LaundryApiSdk().getMachineApi();
+final String laundryId = laundryId_example; // String | 
+final String personId = personId_example; // String | 
+final String type = type_example; // String | 
+final String programId = programId_example; // String | 
 
 try {
-    api.machineControllerListV1();
+    api.machineControllerListV1(laundryId, personId, type, programId);
 } catch on DioException (e) {
     print('Exception when calling MachineApi->machineControllerListV1: $e\n');
 }
 ```
 
 ### Parameters
-This endpoint does not need any parameter.
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **laundryId** | **String**|  | [optional] 
+ **personId** | **String**|  | [optional] 
+ **type** | **String**|  | [optional] 
+ **programId** | **String**|  | [optional] 
 
 ### Return type
 

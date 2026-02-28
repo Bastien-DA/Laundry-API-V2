@@ -7,12 +7,12 @@ void main() {
   final instance = LaundryApiSdk().getPersonApi();
 
   group(PersonApi, () {
-    //Future personControllerCreateV1(Object body) async
+    //Future personControllerCreateV1(CreatePersonDto createPersonDto) async
     test('test personControllerCreateV1', () async {
       // TODO
     });
 
-    //Future personControllerEditV1(String id, Object body) async
+    //Future personControllerEditV1(String id, EditPersonDto editPersonDto) async
     test('test personControllerEditV1', () async {
       // TODO
     });
@@ -22,7 +22,7 @@ void main() {
       // TODO
     });
 
-    //Future personControllerListV1() async
+    //Future personControllerListV1({ String usernameContains, String personType, String laundryId, String machineId, bool hasUser, String userId }) async
     test('test personControllerListV1', () async {
       // TODO
     });

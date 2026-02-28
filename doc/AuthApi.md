@@ -15,7 +15,7 @@ Method | HTTP request | Description
 
 
 # **authControllerLoginV1**
-> authControllerLoginV1(body)
+> authControllerLoginV1(loginDto)
 
 
 
@@ -24,10 +24,10 @@ Method | HTTP request | Description
 import 'package:laundry_api_sdk/api.dart';
 
 final api = LaundryApiSdk().getAuthApi();
-final Object body = Object; // Object | 
+final LoginDto loginDto = ; // LoginDto | 
 
 try {
-    api.authControllerLoginV1(body);
+    api.authControllerLoginV1(loginDto);
 } catch on DioException (e) {
     print('Exception when calling AuthApi->authControllerLoginV1: $e\n');
 }
@@ -37,7 +37,7 @@ try {
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **body** | **Object**|  | 
+ **loginDto** | [**LoginDto**](LoginDto.md)|  | 
 
 ### Return type
 
@@ -91,7 +91,7 @@ void (empty response body)
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
 # **authControllerRegisterV1**
-> authControllerRegisterV1(body)
+> authControllerRegisterV1(registerDto)
 
 
 
@@ -100,10 +100,10 @@ void (empty response body)
 import 'package:laundry_api_sdk/api.dart';
 
 final api = LaundryApiSdk().getAuthApi();
-final Object body = Object; // Object | 
+final RegisterDto registerDto = ; // RegisterDto | 
 
 try {
-    api.authControllerRegisterV1(body);
+    api.authControllerRegisterV1(registerDto);
 } catch on DioException (e) {
     print('Exception when calling AuthApi->authControllerRegisterV1: $e\n');
 }
@@ -113,7 +113,7 @@ try {
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **body** | **Object**|  | 
+ **registerDto** | [**RegisterDto**](RegisterDto.md)|  | 
 
 ### Return type
 

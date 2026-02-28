@@ -16,4 +16,15 @@ export 'package:laundry_api_sdk/src/api/person_api.dart';
 export 'package:laundry_api_sdk/src/api/program_api.dart';
 export 'package:laundry_api_sdk/src/api/user_api.dart';
 
+export 'package:laundry_api_sdk/src/model/create_laundry_dto.dart';
+export 'package:laundry_api_sdk/src/model/create_machine_dto.dart';
+export 'package:laundry_api_sdk/src/model/create_person_dto.dart';
+export 'package:laundry_api_sdk/src/model/create_program_dto.dart';
+export 'package:laundry_api_sdk/src/model/edit_laundry_dto.dart';
+export 'package:laundry_api_sdk/src/model/edit_machine_dto.dart';
+export 'package:laundry_api_sdk/src/model/edit_person_dto.dart';
+export 'package:laundry_api_sdk/src/model/edit_program_dto.dart';
+export 'package:laundry_api_sdk/src/model/edit_user_dto.dart';
+export 'package:laundry_api_sdk/src/model/login_dto.dart';
+export 'package:laundry_api_sdk/src/model/register_dto.dart';
 

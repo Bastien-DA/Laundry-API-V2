@@ -7,7 +7,7 @@ void main() {
   final instance = LaundryApiSdk().getAuthApi();
 
   group(AuthApi, () {
-    //Future authControllerLoginV1(Object body) async
+    //Future authControllerLoginV1(LoginDto loginDto) async
     test('test authControllerLoginV1', () async {
       // TODO
     });
@@ -17,7 +17,7 @@ void main() {
       // TODO
     });
 
-    //Future authControllerRegisterV1(Object body) async
+    //Future authControllerRegisterV1(RegisterDto registerDto) async
     test('test authControllerRegisterV1', () async {
       // TODO
     });

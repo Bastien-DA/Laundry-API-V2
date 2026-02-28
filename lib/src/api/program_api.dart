@@ -9,6 +9,8 @@ import 'dart:convert';
 import 'package:laundry_api_sdk/src/deserialize.dart';
 import 'package:dio/dio.dart';
 
+import 'package:laundry_api_sdk/src/model/create_program_dto.dart';
+import 'package:laundry_api_sdk/src/model/edit_program_dto.dart';
 
 class ProgramApi {
 
@@ -20,7 +22,7 @@ class ProgramApi {
   /// 
   ///
   /// Parameters:
-  /// * [body] 
+  /// * [createProgramDto] 
   /// * [cancelToken] - A [CancelToken] that can be used to cancel the operation
   /// * [headers] - Can be used to add additional headers to the request
   /// * [extras] - Can be used to add flags to the request
@@ -31,7 +33,7 @@ class ProgramApi {
   /// Returns a [Future]
   /// Throws [DioException] if API call or serialization fails
   Future<Response<void>> programControllerCreateV1({ 
-    required Object body,
+    required CreateProgramDto createProgramDto,
     CancelToken? cancelToken,
     Map<String, dynamic>? headers,
     Map<String, dynamic>? extra,
@@ -56,7 +58,7 @@ class ProgramApi {
     dynamic _bodyData;
 
     try {
-_bodyData=jsonEncode(body);
+_bodyData=jsonEncode(createProgramDto);
     } catch(error, stackTrace) {
       throw DioException(
          requestOptions: _options.compose(
@@ -86,7 +88,7 @@ _bodyData=jsonEncode(body);
   ///
   /// Parameters:
   /// * [id] 
-  /// * [body] 
+  /// * [editProgramDto] 
   /// * [cancelToken] - A [CancelToken] that can be used to cancel the operation
   /// * [headers] - Can be used to add additional headers to the request
   /// * [extras] - Can be used to add flags to the request
@@ -98,7 +100,7 @@ _bodyData=jsonEncode(body);
   /// Throws [DioException] if API call or serialization fails
   Future<Response<void>> programControllerEditV1({ 
     required String id,
-    required Object body,
+    required EditProgramDto editProgramDto,
     CancelToken? cancelToken,
     Map<String, dynamic>? headers,
     Map<String, dynamic>? extra,
@@ -123,7 +125,7 @@ _bodyData=jsonEncode(body);
     dynamic _bodyData;
 
     try {
-_bodyData=jsonEncode(body);
+_bodyData=jsonEncode(editProgramDto);
     } catch(error, stackTrace) {
       throw DioException(
          requestOptions: _options.compose(
@@ -199,6 +201,8 @@ _bodyData=jsonEncode(body);
   /// 
   ///
   /// Parameters:
+  /// * [nameContains] 
+  /// * [machineId] 
   /// * [cancelToken] - A [CancelToken] that can be used to cancel the operation
   /// * [headers] - Can be used to add additional headers to the request
   /// * [extras] - Can be used to add flags to the request
@@ -209,6 +213,8 @@ _bodyData=jsonEncode(body);
   /// Returns a [Future]
   /// Throws [DioException] if API call or serialization fails
   Future<Response<void>> programControllerListV1({ 
+    String? nameContains,
+    String? machineId,
     CancelToken? cancelToken,
     Map<String, dynamic>? headers,
     Map<String, dynamic>? extra,
@@ -229,9 +235,15 @@ _bodyData=jsonEncode(body);
       validateStatus: validateStatus,
     );
 
+    final _queryParameters = <String, dynamic>{
+      if (nameContains != null) r'nameContains': nameContains,
+      if (machineId != null) r'machineId': machineId,
+    };
+
     final _response = await _dio.request<Object>(
       _path,
       options: _options,
+      queryParameters: _queryParameters,
       cancelToken: cancelToken,
       onSendProgress: onSendProgress,
       onReceiveProgress: onReceiveProgress,

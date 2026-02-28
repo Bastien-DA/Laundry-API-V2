@@ -16,7 +16,7 @@ Method | HTTP request | Description
 
 
 # **userControllerEditV1**
-> userControllerEditV1(id, body)
+> userControllerEditV1(id, editUserDto)
 
 
 
@@ -26,10 +26,10 @@ import 'package:laundry_api_sdk/api.dart';
 
 final api = LaundryApiSdk().getUserApi();
 final String id = id_example; // String | 
-final Object body = Object; // Object | 
+final EditUserDto editUserDto = ; // EditUserDto | 
 
 try {
-    api.userControllerEditV1(id, body);
+    api.userControllerEditV1(id, editUserDto);
 } catch on DioException (e) {
     print('Exception when calling UserApi->userControllerEditV1: $e\n');
 }
@@ -40,7 +40,7 @@ try {
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
  **id** | **String**|  | 
- **body** | **Object**|  | 
+ **editUserDto** | [**EditUserDto**](EditUserDto.md)|  | 
 
 ### Return type
 
@@ -98,7 +98,7 @@ No authorization required
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
 # **userControllerListV1**
-> userControllerListV1()
+> userControllerListV1(emailContains, hasPerson, personId)
 
 
 
@@ -107,16 +107,24 @@ No authorization required
 import 'package:laundry_api_sdk/api.dart';
 
 final api = LaundryApiSdk().getUserApi();
+final String emailContains = emailContains_example; // String | 
+final bool hasPerson = true; // bool | 
+final String personId = personId_example; // String | 
 
 try {
-    api.userControllerListV1();
+    api.userControllerListV1(emailContains, hasPerson, personId);
 } catch on DioException (e) {
     print('Exception when calling UserApi->userControllerListV1: $e\n');
 }
 ```
 
 ### Parameters
-This endpoint does not need any parameter.
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **emailContains** | **String**|  | [optional] 
+ **hasPerson** | **bool**|  | [optional] 
+ **personId** | **String**|  | [optional] 
 
 ### Return type
 
