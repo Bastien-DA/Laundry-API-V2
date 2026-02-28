@@ -5,9 +5,11 @@ import {
     EditPersonCommand,
     PersonFilter, PersonRepository,
 } from '@features/person/domain/ports/person.repository.port';
+import {Injectable} from "@nestjs/common";
 
 type Sort = { field: 'username' | 'personType' | 'id'; direction: 'asc' | 'desc' };
 
+@Injectable()
 export class PrismaPersonRepository implements PersonRepository{
     constructor(private readonly prisma: PrismaService) {}
 

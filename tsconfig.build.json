@@ -5,6 +5,12 @@
     "@/*": ["src/*"],
     "@core/*": ["src/core/*"],
     "@features/*": ["src/features/*"],
+    "@fixtures/*": ["src/fixtures/*"],
     "@shared/*": ["src/shared/*"]
-  }
+  },
+  "plugins": [
+    {
+      "name": "@nestjs/swagger/plugin"
+    }
+  ]
 }

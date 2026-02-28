@@ -6,9 +6,11 @@ import {
     ProgramFilter,
     ProgramRepository,
 } from '@features/program/domain/ports/program.repository.port';
+import {Injectable} from "@nestjs/common";
 
 type Sort = { field: 'name' | 'duration'; direction: 'asc' | 'desc' };
 
+@Injectable()
 export class PrismaProgramRepository implements ProgramRepository {
     constructor(private readonly prisma: PrismaService) {}
 

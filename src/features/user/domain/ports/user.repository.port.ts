@@ -1,6 +1,7 @@
 import { UserEntity } from '@features/user/domain/entities/user.entity';
 import { AbstractRepository } from '@shared/domain/ports/abstract.repository';
 import { ListParams } from '@shared/application/types/list-params';
+import {Injectable} from "@nestjs/common";
 
 export type UserFilter = {
   emailContains?: string;

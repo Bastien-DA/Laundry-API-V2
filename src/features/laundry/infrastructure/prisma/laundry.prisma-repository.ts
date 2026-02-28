@@ -5,9 +5,11 @@ import {
     EditLaundryCommand,
     LaundryFilter, LaundryRepository,
 } from '@features/laundry/domain/ports/laundry.repository.port';
+import {Injectable} from "@nestjs/common";
 
 type Sort = { field: 'createdAt' | 'name'; direction: 'asc' | 'desc' };
 
+@Injectable()
 export class PrismaLaundryRepository implements LaundryRepository {
     constructor(private readonly prisma: PrismaService) {}
 

@@ -7,6 +7,7 @@ import {
 import { PrismaPg } from '@prisma/adapter-pg';
 import { Pool } from 'pg';
 import { PrismaClient } from '@prisma/client';
+import 'dotenv/config';
 
 @Injectable()
 export class PrismaService
@@ -15,7 +16,11 @@ export class PrismaService
 {
   constructor() {
     const pool = new Pool({
-      connectionString: process.env.DATABASE_URL,
+      user: process.env.DB_USER,
+      password: process.env.DB_PASSWORD,
+      host: process.env.DB_HOST,
+      port: Number.parseInt(process.env.DB_PORT ?? '5432'),
+      database: process.env.DB_NAME,
     });
 
     // eslint-disable-next-line @typescript-eslint/no-unsafe-call

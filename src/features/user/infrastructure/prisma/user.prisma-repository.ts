@@ -6,9 +6,11 @@ import {
   UserFilter,
   UserRepository,
 } from '@features/user/domain/ports/user.repository.port';
+import {Injectable} from "@nestjs/common";
 
 type Sort = { field: 'createdAt' | 'email'; direction: 'asc' | 'desc' };
 
+@Injectable()
 export class PrismaUserRepository implements UserRepository {
   constructor(private readonly prisma: PrismaService) {}
 

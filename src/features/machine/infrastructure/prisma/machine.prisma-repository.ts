@@ -6,9 +6,11 @@ import {
     MachineFilter,
     MachineRepository,
 } from '@features/machine/domain/ports/machine.repository.port';
+import {Injectable} from "@nestjs/common";
 
 type Sort = { field: 'name' | 'price'; direction: 'asc' | 'desc' };
 
+@Injectable()
 export class PrismaMachineRepository implements MachineRepository {
     constructor(private readonly prisma: PrismaService) {}
 
