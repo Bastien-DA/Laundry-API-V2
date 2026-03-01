@@ -9,23 +9,23 @@ All URIs are relative to *http://localhost*
 
 Method | HTTP request | Description
 ------------- | ------------- | -------------
-[**machineControllerAvailableV1**](MachineApi.md#machinecontrolleravailablev1) | **POST** /api/v1/machines/{id}/available | 
-[**machineControllerCreateV1**](MachineApi.md#machinecontrollercreatev1) | **POST** /api/v1/machines | 
-[**machineControllerEditV1**](MachineApi.md#machinecontrollereditv1) | **PATCH** /api/v1/machines/{id} | 
-[**machineControllerGetByIdV1**](MachineApi.md#machinecontrollergetbyidv1) | **GET** /api/v1/machines/{id} | 
-[**machineControllerListV1**](MachineApi.md#machinecontrollerlistv1) | **GET** /api/v1/machines | 
-[**machineControllerOutOfOrderV1**](MachineApi.md#machinecontrolleroutoforderv1) | **POST** /api/v1/machines/{id}/out-of-order | 
-[**machineControllerPauseV1**](MachineApi.md#machinecontrollerpausev1) | **POST** /api/v1/machines/{id}/pause | 
-[**machineControllerRemoveV1**](MachineApi.md#machinecontrollerremovev1) | **DELETE** /api/v1/machines/{id} | 
-[**machineControllerResumeV1**](MachineApi.md#machinecontrollerresumev1) | **POST** /api/v1/machines/{id}/resume | 
-[**machineControllerStartV1**](MachineApi.md#machinecontrollerstartv1) | **POST** /api/v1/machines/{id}/start/{programId} | 
-[**machineControllerStopV1**](MachineApi.md#machinecontrollerstopv1) | **POST** /api/v1/machines/{id}/stop | 
+[**machineControllerAvailableV1**](MachineApi.md#machinecontrolleravailablev1) | **POST** /api/v1/machines/{id}/available | Mark machine as available (from OUT_OF_ORDER)
+[**machineControllerCreateV1**](MachineApi.md#machinecontrollercreatev1) | **POST** /api/v1/machines | Create a machine
+[**machineControllerEditV1**](MachineApi.md#machinecontrollereditv1) | **PATCH** /api/v1/machines/{id} | Edit a machine
+[**machineControllerGetByIdV1**](MachineApi.md#machinecontrollergetbyidv1) | **GET** /api/v1/machines/{id} | Get a machine by id
+[**machineControllerListV1**](MachineApi.md#machinecontrollerlistv1) | **GET** /api/v1/machines | List machines (no pagination)
+[**machineControllerOutOfOrderV1**](MachineApi.md#machinecontrolleroutoforderv1) | **POST** /api/v1/machines/{id}/out-of-order | Set machine as out of order
+[**machineControllerPauseV1**](MachineApi.md#machinecontrollerpausev1) | **POST** /api/v1/machines/{id}/pause | Pause current program
+[**machineControllerRemoveV1**](MachineApi.md#machinecontrollerremovev1) | **DELETE** /api/v1/machines/{id} | Delete a machine
+[**machineControllerResumeV1**](MachineApi.md#machinecontrollerresumev1) | **POST** /api/v1/machines/{id}/resume | Resume paused program
+[**machineControllerStartV1**](MachineApi.md#machinecontrollerstartv1) | **POST** /api/v1/machines/{id}/start/{programId} | Start a program on a machine
+[**machineControllerStopV1**](MachineApi.md#machinecontrollerstopv1) | **POST** /api/v1/machines/{id}/stop | Stop program and mark machine as available
 
 
 # **machineControllerAvailableV1**
 > machineControllerAvailableV1(id)
 
-
+Mark machine as available (from OUT_OF_ORDER)
 
 ### Example
 ```dart
@@ -63,9 +63,9 @@ No authorization required
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
 # **machineControllerCreateV1**
-> machineControllerCreateV1(createMachineDto)
+> MachineDto machineControllerCreateV1(createMachineDto)
 
-
+Create a machine
 
 ### Example
 ```dart
@@ -75,7 +75,8 @@ final api = LaundryApiSdk().getMachineApi();
 final CreateMachineDto createMachineDto = ; // CreateMachineDto | 
 
 try {
-    api.machineControllerCreateV1(createMachineDto);
+    final response = api.machineControllerCreateV1(createMachineDto);
+    print(response);
 } catch on DioException (e) {
     print('Exception when calling MachineApi->machineControllerCreateV1: $e\n');
 }
@@ -89,7 +90,7 @@ Name | Type | Description  | Notes
 
 ### Return type
 
-void (empty response body)
+[**MachineDto**](MachineDto.md)
 
 ### Authorization
 
@@ -98,14 +99,14 @@ No authorization required
 ### HTTP request headers
 
  - **Content-Type**: application/json
- - **Accept**: Not defined
+ - **Accept**: application/json
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
 # **machineControllerEditV1**
-> machineControllerEditV1(id, editMachineDto)
+> MachineDto machineControllerEditV1(id, editMachineDto)
 
-
+Edit a machine
 
 ### Example
 ```dart
@@ -116,7 +117,8 @@ final String id = id_example; // String |
 final EditMachineDto editMachineDto = ; // EditMachineDto | 
 
 try {
-    api.machineControllerEditV1(id, editMachineDto);
+    final response = api.machineControllerEditV1(id, editMachineDto);
+    print(response);
 } catch on DioException (e) {
     print('Exception when calling MachineApi->machineControllerEditV1: $e\n');
 }
@@ -131,7 +133,7 @@ Name | Type | Description  | Notes
 
 ### Return type
 
-void (empty response body)
+[**MachineDto**](MachineDto.md)
 
 ### Authorization
 
@@ -140,14 +142,14 @@ No authorization required
 ### HTTP request headers
 
  - **Content-Type**: application/json
- - **Accept**: Not defined
+ - **Accept**: application/json
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
 # **machineControllerGetByIdV1**
-> machineControllerGetByIdV1(id)
+> MachineDto machineControllerGetByIdV1(id)
 
-
+Get a machine by id
 
 ### Example
 ```dart
@@ -157,7 +159,8 @@ final api = LaundryApiSdk().getMachineApi();
 final String id = id_example; // String | 
 
 try {
-    api.machineControllerGetByIdV1(id);
+    final response = api.machineControllerGetByIdV1(id);
+    print(response);
 } catch on DioException (e) {
     print('Exception when calling MachineApi->machineControllerGetByIdV1: $e\n');
 }
@@ -171,7 +174,7 @@ Name | Type | Description  | Notes
 
 ### Return type
 
-void (empty response body)
+[**MachineDto**](MachineDto.md)
 
 ### Authorization
 
@@ -180,14 +183,14 @@ No authorization required
 ### HTTP request headers
 
  - **Content-Type**: Not defined
- - **Accept**: Not defined
+ - **Accept**: application/json
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
 # **machineControllerListV1**
-> machineControllerListV1(laundryId, personId, type, programId)
+> List<MachineDto> machineControllerListV1(laundryId, personId, type, programId)
 
-
+List machines (no pagination)
 
 ### Example
 ```dart
@@ -200,7 +203,8 @@ final String type = type_example; // String |
 final String programId = programId_example; // String | 
 
 try {
-    api.machineControllerListV1(laundryId, personId, type, programId);
+    final response = api.machineControllerListV1(laundryId, personId, type, programId);
+    print(response);
 } catch on DioException (e) {
     print('Exception when calling MachineApi->machineControllerListV1: $e\n');
 }
@@ -217,7 +221,7 @@ Name | Type | Description  | Notes
 
 ### Return type
 
-void (empty response body)
+[**List&lt;MachineDto&gt;**](MachineDto.md)
 
 ### Authorization
 
@@ -226,14 +230,14 @@ No authorization required
 ### HTTP request headers
 
  - **Content-Type**: Not defined
- - **Accept**: Not defined
+ - **Accept**: application/json
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
 # **machineControllerOutOfOrderV1**
 > machineControllerOutOfOrderV1(id)
 
-
+Set machine as out of order
 
 ### Example
 ```dart
@@ -273,7 +277,7 @@ No authorization required
 # **machineControllerPauseV1**
 > machineControllerPauseV1(id)
 
-
+Pause current program
 
 ### Example
 ```dart
@@ -313,7 +317,7 @@ No authorization required
 # **machineControllerRemoveV1**
 > machineControllerRemoveV1(id)
 
-
+Delete a machine
 
 ### Example
 ```dart
@@ -353,7 +357,7 @@ No authorization required
 # **machineControllerResumeV1**
 > machineControllerResumeV1(id)
 
-
+Resume paused program
 
 ### Example
 ```dart
@@ -393,7 +397,7 @@ No authorization required
 # **machineControllerStartV1**
 > machineControllerStartV1(id, programId)
 
-
+Start a program on a machine
 
 ### Example
 ```dart
@@ -435,7 +439,7 @@ No authorization required
 # **machineControllerStopV1**
 > machineControllerStopV1(id)
 
-
+Stop program and mark machine as available
 
 ### Example
 ```dart

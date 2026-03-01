@@ -7,8 +7,13 @@ import 'package:laundry_api_sdk/src/model/edit_machine_dto.dart';
 import 'package:laundry_api_sdk/src/model/edit_person_dto.dart';
 import 'package:laundry_api_sdk/src/model/edit_program_dto.dart';
 import 'package:laundry_api_sdk/src/model/edit_user_dto.dart';
+import 'package:laundry_api_sdk/src/model/laundry_dto.dart';
 import 'package:laundry_api_sdk/src/model/login_dto.dart';
+import 'package:laundry_api_sdk/src/model/machine_dto.dart';
+import 'package:laundry_api_sdk/src/model/person_dto.dart';
+import 'package:laundry_api_sdk/src/model/program_dto.dart';
 import 'package:laundry_api_sdk/src/model/register_dto.dart';
+import 'package:laundry_api_sdk/src/model/user_dto.dart';
 
 final _regList = RegExp(r'^List<(.*)>$');
 final _regSet = RegExp(r'^Set<(.*)>$');
@@ -46,10 +51,20 @@ final _regMap = RegExp(r'^Map<String,(.*)>$');
           return EditProgramDto.fromJson(value as Map<String, dynamic>) as ReturnType;
         case 'EditUserDto':
           return EditUserDto.fromJson(value as Map<String, dynamic>) as ReturnType;
+        case 'LaundryDto':
+          return LaundryDto.fromJson(value as Map<String, dynamic>) as ReturnType;
         case 'LoginDto':
           return LoginDto.fromJson(value as Map<String, dynamic>) as ReturnType;
+        case 'MachineDto':
+          return MachineDto.fromJson(value as Map<String, dynamic>) as ReturnType;
+        case 'PersonDto':
+          return PersonDto.fromJson(value as Map<String, dynamic>) as ReturnType;
+        case 'ProgramDto':
+          return ProgramDto.fromJson(value as Map<String, dynamic>) as ReturnType;
         case 'RegisterDto':
           return RegisterDto.fromJson(value as Map<String, dynamic>) as ReturnType;
+        case 'UserDto':
+          return UserDto.fromJson(value as Map<String, dynamic>) as ReturnType;
         default:
           RegExpMatch? match;
 

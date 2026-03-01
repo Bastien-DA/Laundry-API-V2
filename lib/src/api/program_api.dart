@@ -11,6 +11,7 @@ import 'package:dio/dio.dart';
 
 import 'package:laundry_api_sdk/src/model/create_program_dto.dart';
 import 'package:laundry_api_sdk/src/model/edit_program_dto.dart';
+import 'package:laundry_api_sdk/src/model/program_dto.dart';
 
 class ProgramApi {
 
@@ -18,7 +19,7 @@ class ProgramApi {
 
   const ProgramApi(this._dio);
 
-  /// programControllerCreateV1
+  /// Create a program
   /// 
   ///
   /// Parameters:
@@ -30,9 +31,9 @@ class ProgramApi {
   /// * [onSendProgress] - A [ProgressCallback] that can be used to get the send progress
   /// * [onReceiveProgress] - A [ProgressCallback] that can be used to get the receive progress
   ///
-  /// Returns a [Future]
+  /// Returns a [Future] containing a [Response] with a [ProgramDto] as data
   /// Throws [DioException] if API call or serialization fails
-  Future<Response<void>> programControllerCreateV1({ 
+  Future<Response<ProgramDto>> programControllerCreateV1({ 
     required CreateProgramDto createProgramDto,
     CancelToken? cancelToken,
     Map<String, dynamic>? headers,
@@ -80,10 +81,35 @@ _bodyData=jsonEncode(createProgramDto);
       onReceiveProgress: onReceiveProgress,
     );
 
-    return _response;
+    ProgramDto? _responseData;
+
+    try {
+final rawData = _response.data;
+_responseData = rawData == null ? null : deserialize<ProgramDto, ProgramDto>(rawData, 'ProgramDto', growable: true);
+
+    } catch (error, stackTrace) {
+      throw DioException(
+        requestOptions: _response.requestOptions,
+        response: _response,
+        type: DioExceptionType.unknown,
+        error: error,
+        stackTrace: stackTrace,
+      );
+    }
+
+    return Response<ProgramDto>(
+      data: _responseData,
+      headers: _response.headers,
+      isRedirect: _response.isRedirect,
+      requestOptions: _response.requestOptions,
+      redirects: _response.redirects,
+      statusCode: _response.statusCode,
+      statusMessage: _response.statusMessage,
+      extra: _response.extra,
+    );
   }
 
-  /// programControllerEditV1
+  /// Edit a program
   /// 
   ///
   /// Parameters:
@@ -96,9 +122,9 @@ _bodyData=jsonEncode(createProgramDto);
   /// * [onSendProgress] - A [ProgressCallback] that can be used to get the send progress
   /// * [onReceiveProgress] - A [ProgressCallback] that can be used to get the receive progress
   ///
-  /// Returns a [Future]
+  /// Returns a [Future] containing a [Response] with a [ProgramDto] as data
   /// Throws [DioException] if API call or serialization fails
-  Future<Response<void>> programControllerEditV1({ 
+  Future<Response<ProgramDto>> programControllerEditV1({ 
     required String id,
     required EditProgramDto editProgramDto,
     CancelToken? cancelToken,
@@ -147,10 +173,35 @@ _bodyData=jsonEncode(editProgramDto);
       onReceiveProgress: onReceiveProgress,
     );
 
-    return _response;
+    ProgramDto? _responseData;
+
+    try {
+final rawData = _response.data;
+_responseData = rawData == null ? null : deserialize<ProgramDto, ProgramDto>(rawData, 'ProgramDto', growable: true);
+
+    } catch (error, stackTrace) {
+      throw DioException(
+        requestOptions: _response.requestOptions,
+        response: _response,
+        type: DioExceptionType.unknown,
+        error: error,
+        stackTrace: stackTrace,
+      );
+    }
+
+    return Response<ProgramDto>(
+      data: _responseData,
+      headers: _response.headers,
+      isRedirect: _response.isRedirect,
+      requestOptions: _response.requestOptions,
+      redirects: _response.redirects,
+      statusCode: _response.statusCode,
+      statusMessage: _response.statusMessage,
+      extra: _response.extra,
+    );
   }
 
-  /// programControllerGetByIdV1
+  /// Get a program by id
   /// 
   ///
   /// Parameters:
@@ -162,9 +213,9 @@ _bodyData=jsonEncode(editProgramDto);
   /// * [onSendProgress] - A [ProgressCallback] that can be used to get the send progress
   /// * [onReceiveProgress] - A [ProgressCallback] that can be used to get the receive progress
   ///
-  /// Returns a [Future]
+  /// Returns a [Future] containing a [Response] with a [ProgramDto] as data
   /// Throws [DioException] if API call or serialization fails
-  Future<Response<void>> programControllerGetByIdV1({ 
+  Future<Response<ProgramDto>> programControllerGetByIdV1({ 
     required String id,
     CancelToken? cancelToken,
     Map<String, dynamic>? headers,
@@ -194,10 +245,35 @@ _bodyData=jsonEncode(editProgramDto);
       onReceiveProgress: onReceiveProgress,
     );
 
-    return _response;
+    ProgramDto? _responseData;
+
+    try {
+final rawData = _response.data;
+_responseData = rawData == null ? null : deserialize<ProgramDto, ProgramDto>(rawData, 'ProgramDto', growable: true);
+
+    } catch (error, stackTrace) {
+      throw DioException(
+        requestOptions: _response.requestOptions,
+        response: _response,
+        type: DioExceptionType.unknown,
+        error: error,
+        stackTrace: stackTrace,
+      );
+    }
+
+    return Response<ProgramDto>(
+      data: _responseData,
+      headers: _response.headers,
+      isRedirect: _response.isRedirect,
+      requestOptions: _response.requestOptions,
+      redirects: _response.redirects,
+      statusCode: _response.statusCode,
+      statusMessage: _response.statusMessage,
+      extra: _response.extra,
+    );
   }
 
-  /// programControllerListV1
+  /// List programs (no pagination)
   /// 
   ///
   /// Parameters:
@@ -210,9 +286,9 @@ _bodyData=jsonEncode(editProgramDto);
   /// * [onSendProgress] - A [ProgressCallback] that can be used to get the send progress
   /// * [onReceiveProgress] - A [ProgressCallback] that can be used to get the receive progress
   ///
-  /// Returns a [Future]
+  /// Returns a [Future] containing a [Response] with a [List<ProgramDto>] as data
   /// Throws [DioException] if API call or serialization fails
-  Future<Response<void>> programControllerListV1({ 
+  Future<Response<List<ProgramDto>>> programControllerListV1({ 
     String? nameContains,
     String? machineId,
     CancelToken? cancelToken,
@@ -249,10 +325,35 @@ _bodyData=jsonEncode(editProgramDto);
       onReceiveProgress: onReceiveProgress,
     );
 
-    return _response;
+    List<ProgramDto>? _responseData;
+
+    try {
+final rawData = _response.data;
+_responseData = rawData == null ? null : deserialize<List<ProgramDto>, ProgramDto>(rawData, 'List<ProgramDto>', growable: true);
+
+    } catch (error, stackTrace) {
+      throw DioException(
+        requestOptions: _response.requestOptions,
+        response: _response,
+        type: DioExceptionType.unknown,
+        error: error,
+        stackTrace: stackTrace,
+      );
+    }
+
+    return Response<List<ProgramDto>>(
+      data: _responseData,
+      headers: _response.headers,
+      isRedirect: _response.isRedirect,
+      requestOptions: _response.requestOptions,
+      redirects: _response.redirects,
+      statusCode: _response.statusCode,
+      statusMessage: _response.statusMessage,
+      extra: _response.extra,
+    );
   }
 
-  /// programControllerRemoveV1
+  /// Delete a program
   /// 
   ///
   /// Parameters:

@@ -11,6 +11,7 @@ import 'package:dio/dio.dart';
 
 import 'package:laundry_api_sdk/src/model/create_laundry_dto.dart';
 import 'package:laundry_api_sdk/src/model/edit_laundry_dto.dart';
+import 'package:laundry_api_sdk/src/model/laundry_dto.dart';
 
 class LaundryApi {
 
@@ -18,7 +19,7 @@ class LaundryApi {
 
   const LaundryApi(this._dio);
 
-  /// laundryControllerCreateV1
+  /// Create a laundry
   /// 
   ///
   /// Parameters:
@@ -30,9 +31,9 @@ class LaundryApi {
   /// * [onSendProgress] - A [ProgressCallback] that can be used to get the send progress
   /// * [onReceiveProgress] - A [ProgressCallback] that can be used to get the receive progress
   ///
-  /// Returns a [Future]
+  /// Returns a [Future] containing a [Response] with a [LaundryDto] as data
   /// Throws [DioException] if API call or serialization fails
-  Future<Response<void>> laundryControllerCreateV1({ 
+  Future<Response<LaundryDto>> laundryControllerCreateV1({ 
     required CreateLaundryDto createLaundryDto,
     CancelToken? cancelToken,
     Map<String, dynamic>? headers,
@@ -80,10 +81,35 @@ _bodyData=jsonEncode(createLaundryDto);
       onReceiveProgress: onReceiveProgress,
     );
 
-    return _response;
+    LaundryDto? _responseData;
+
+    try {
+final rawData = _response.data;
+_responseData = rawData == null ? null : deserialize<LaundryDto, LaundryDto>(rawData, 'LaundryDto', growable: true);
+
+    } catch (error, stackTrace) {
+      throw DioException(
+        requestOptions: _response.requestOptions,
+        response: _response,
+        type: DioExceptionType.unknown,
+        error: error,
+        stackTrace: stackTrace,
+      );
+    }
+
+    return Response<LaundryDto>(
+      data: _responseData,
+      headers: _response.headers,
+      isRedirect: _response.isRedirect,
+      requestOptions: _response.requestOptions,
+      redirects: _response.redirects,
+      statusCode: _response.statusCode,
+      statusMessage: _response.statusMessage,
+      extra: _response.extra,
+    );
   }
 
-  /// laundryControllerEditV1
+  /// Edit a laundry
   /// 
   ///
   /// Parameters:
@@ -96,9 +122,9 @@ _bodyData=jsonEncode(createLaundryDto);
   /// * [onSendProgress] - A [ProgressCallback] that can be used to get the send progress
   /// * [onReceiveProgress] - A [ProgressCallback] that can be used to get the receive progress
   ///
-  /// Returns a [Future]
+  /// Returns a [Future] containing a [Response] with a [LaundryDto] as data
   /// Throws [DioException] if API call or serialization fails
-  Future<Response<void>> laundryControllerEditV1({ 
+  Future<Response<LaundryDto>> laundryControllerEditV1({ 
     required String id,
     required EditLaundryDto editLaundryDto,
     CancelToken? cancelToken,
@@ -147,10 +173,35 @@ _bodyData=jsonEncode(editLaundryDto);
       onReceiveProgress: onReceiveProgress,
     );
 
-    return _response;
+    LaundryDto? _responseData;
+
+    try {
+final rawData = _response.data;
+_responseData = rawData == null ? null : deserialize<LaundryDto, LaundryDto>(rawData, 'LaundryDto', growable: true);
+
+    } catch (error, stackTrace) {
+      throw DioException(
+        requestOptions: _response.requestOptions,
+        response: _response,
+        type: DioExceptionType.unknown,
+        error: error,
+        stackTrace: stackTrace,
+      );
+    }
+
+    return Response<LaundryDto>(
+      data: _responseData,
+      headers: _response.headers,
+      isRedirect: _response.isRedirect,
+      requestOptions: _response.requestOptions,
+      redirects: _response.redirects,
+      statusCode: _response.statusCode,
+      statusMessage: _response.statusMessage,
+      extra: _response.extra,
+    );
   }
 
-  /// laundryControllerGetByIdV1
+  /// Get a laundry by id
   /// 
   ///
   /// Parameters:
@@ -162,9 +213,9 @@ _bodyData=jsonEncode(editLaundryDto);
   /// * [onSendProgress] - A [ProgressCallback] that can be used to get the send progress
   /// * [onReceiveProgress] - A [ProgressCallback] that can be used to get the receive progress
   ///
-  /// Returns a [Future]
+  /// Returns a [Future] containing a [Response] with a [LaundryDto] as data
   /// Throws [DioException] if API call or serialization fails
-  Future<Response<void>> laundryControllerGetByIdV1({ 
+  Future<Response<LaundryDto>> laundryControllerGetByIdV1({ 
     required String id,
     CancelToken? cancelToken,
     Map<String, dynamic>? headers,
@@ -194,10 +245,35 @@ _bodyData=jsonEncode(editLaundryDto);
       onReceiveProgress: onReceiveProgress,
     );
 
-    return _response;
+    LaundryDto? _responseData;
+
+    try {
+final rawData = _response.data;
+_responseData = rawData == null ? null : deserialize<LaundryDto, LaundryDto>(rawData, 'LaundryDto', growable: true);
+
+    } catch (error, stackTrace) {
+      throw DioException(
+        requestOptions: _response.requestOptions,
+        response: _response,
+        type: DioExceptionType.unknown,
+        error: error,
+        stackTrace: stackTrace,
+      );
+    }
+
+    return Response<LaundryDto>(
+      data: _responseData,
+      headers: _response.headers,
+      isRedirect: _response.isRedirect,
+      requestOptions: _response.requestOptions,
+      redirects: _response.redirects,
+      statusCode: _response.statusCode,
+      statusMessage: _response.statusMessage,
+      extra: _response.extra,
+    );
   }
 
-  /// laundryControllerListV1
+  /// List laundries (no pagination)
   /// 
   ///
   /// Parameters:
@@ -211,9 +287,9 @@ _bodyData=jsonEncode(editLaundryDto);
   /// * [onSendProgress] - A [ProgressCallback] that can be used to get the send progress
   /// * [onReceiveProgress] - A [ProgressCallback] that can be used to get the receive progress
   ///
-  /// Returns a [Future]
+  /// Returns a [Future] containing a [Response] with a [List<LaundryDto>] as data
   /// Throws [DioException] if API call or serialization fails
-  Future<Response<void>> laundryControllerListV1({ 
+  Future<Response<List<LaundryDto>>> laundryControllerListV1({ 
     String? nameContains,
     String? personId,
     String? machineId,
@@ -252,10 +328,35 @@ _bodyData=jsonEncode(editLaundryDto);
       onReceiveProgress: onReceiveProgress,
     );
 
-    return _response;
+    List<LaundryDto>? _responseData;
+
+    try {
+final rawData = _response.data;
+_responseData = rawData == null ? null : deserialize<List<LaundryDto>, LaundryDto>(rawData, 'List<LaundryDto>', growable: true);
+
+    } catch (error, stackTrace) {
+      throw DioException(
+        requestOptions: _response.requestOptions,
+        response: _response,
+        type: DioExceptionType.unknown,
+        error: error,
+        stackTrace: stackTrace,
+      );
+    }
+
+    return Response<List<LaundryDto>>(
+      data: _responseData,
+      headers: _response.headers,
+      isRedirect: _response.isRedirect,
+      requestOptions: _response.requestOptions,
+      redirects: _response.redirects,
+      statusCode: _response.statusCode,
+      statusMessage: _response.statusMessage,
+      extra: _response.extra,
+    );
   }
 
-  /// laundryControllerRemoveV1
+  /// Delete a laundry
   /// 
   ///
   /// Parameters:

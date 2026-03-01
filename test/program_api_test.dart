@@ -7,26 +7,36 @@ void main() {
   final instance = LaundryApiSdk().getProgramApi();
 
   group(ProgramApi, () {
-    //Future programControllerCreateV1(CreateProgramDto createProgramDto) async
+    // Create a program
+    //
+    //Future<ProgramDto> programControllerCreateV1(CreateProgramDto createProgramDto) async
     test('test programControllerCreateV1', () async {
       // TODO
     });
 
-    //Future programControllerEditV1(String id, EditProgramDto editProgramDto) async
+    // Edit a program
+    //
+    //Future<ProgramDto> programControllerEditV1(String id, EditProgramDto editProgramDto) async
     test('test programControllerEditV1', () async {
       // TODO
     });
 
-    //Future programControllerGetByIdV1(String id) async
+    // Get a program by id
+    //
+    //Future<ProgramDto> programControllerGetByIdV1(String id) async
     test('test programControllerGetByIdV1', () async {
       // TODO
     });
 
-    //Future programControllerListV1({ String nameContains, String machineId }) async
+    // List programs (no pagination)
+    //
+    //Future<List<ProgramDto>> programControllerListV1({ String nameContains, String machineId }) async
     test('test programControllerListV1', () async {
       // TODO
     });
 
+    // Delete a program
+    //
     //Future programControllerRemoveV1(String id) async
     test('test programControllerRemoveV1', () async {
       // TODO

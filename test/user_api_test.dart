@@ -7,21 +7,29 @@ void main() {
   final instance = LaundryApiSdk().getUserApi();
 
   group(UserApi, () {
-    //Future userControllerEditV1(String id, EditUserDto editUserDto) async
+    // Edit a user
+    //
+    //Future<UserDto> userControllerEditV1(String id, EditUserDto editUserDto) async
     test('test userControllerEditV1', () async {
       // TODO
     });
 
-    //Future userControllerGetByIdV1(String id) async
+    // Get a user by id
+    //
+    //Future<UserDto> userControllerGetByIdV1(String id) async
     test('test userControllerGetByIdV1', () async {
       // TODO
     });
 
-    //Future userControllerListV1({ String emailContains, bool hasPerson, String personId }) async
+    // List users (no pagination)
+    //
+    //Future<List<UserDto>> userControllerListV1({ String emailContains, bool hasPerson, String personId }) async
     test('test userControllerListV1', () async {
       // TODO
     });
 
+    // Delete a user
+    //
     //Future userControllerRemoveV1(String id) async
     test('test userControllerRemoveV1', () async {
       // TODO

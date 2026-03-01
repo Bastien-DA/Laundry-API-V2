@@ -11,6 +11,7 @@ import 'package:dio/dio.dart';
 
 import 'package:laundry_api_sdk/src/model/create_machine_dto.dart';
 import 'package:laundry_api_sdk/src/model/edit_machine_dto.dart';
+import 'package:laundry_api_sdk/src/model/machine_dto.dart';
 
 class MachineApi {
 
@@ -18,7 +19,7 @@ class MachineApi {
 
   const MachineApi(this._dio);
 
-  /// machineControllerAvailableV1
+  /// Mark machine as available (from OUT_OF_ORDER)
   /// 
   ///
   /// Parameters:
@@ -65,7 +66,7 @@ class MachineApi {
     return _response;
   }
 
-  /// machineControllerCreateV1
+  /// Create a machine
   /// 
   ///
   /// Parameters:
@@ -77,9 +78,9 @@ class MachineApi {
   /// * [onSendProgress] - A [ProgressCallback] that can be used to get the send progress
   /// * [onReceiveProgress] - A [ProgressCallback] that can be used to get the receive progress
   ///
-  /// Returns a [Future]
+  /// Returns a [Future] containing a [Response] with a [MachineDto] as data
   /// Throws [DioException] if API call or serialization fails
-  Future<Response<void>> machineControllerCreateV1({ 
+  Future<Response<MachineDto>> machineControllerCreateV1({ 
     required CreateMachineDto createMachineDto,
     CancelToken? cancelToken,
     Map<String, dynamic>? headers,
@@ -127,10 +128,35 @@ _bodyData=jsonEncode(createMachineDto);
       onReceiveProgress: onReceiveProgress,
     );
 
-    return _response;
+    MachineDto? _responseData;
+
+    try {
+final rawData = _response.data;
+_responseData = rawData == null ? null : deserialize<MachineDto, MachineDto>(rawData, 'MachineDto', growable: true);
+
+    } catch (error, stackTrace) {
+      throw DioException(
+        requestOptions: _response.requestOptions,
+        response: _response,
+        type: DioExceptionType.unknown,
+        error: error,
+        stackTrace: stackTrace,
+      );
+    }
+
+    return Response<MachineDto>(
+      data: _responseData,
+      headers: _response.headers,
+      isRedirect: _response.isRedirect,
+      requestOptions: _response.requestOptions,
+      redirects: _response.redirects,
+      statusCode: _response.statusCode,
+      statusMessage: _response.statusMessage,
+      extra: _response.extra,
+    );
   }
 
-  /// machineControllerEditV1
+  /// Edit a machine
   /// 
   ///
   /// Parameters:
@@ -143,9 +169,9 @@ _bodyData=jsonEncode(createMachineDto);
   /// * [onSendProgress] - A [ProgressCallback] that can be used to get the send progress
   /// * [onReceiveProgress] - A [ProgressCallback] that can be used to get the receive progress
   ///
-  /// Returns a [Future]
+  /// Returns a [Future] containing a [Response] with a [MachineDto] as data
   /// Throws [DioException] if API call or serialization fails
-  Future<Response<void>> machineControllerEditV1({ 
+  Future<Response<MachineDto>> machineControllerEditV1({ 
     required String id,
     required EditMachineDto editMachineDto,
     CancelToken? cancelToken,
@@ -194,10 +220,35 @@ _bodyData=jsonEncode(editMachineDto);
       onReceiveProgress: onReceiveProgress,
     );
 
-    return _response;
+    MachineDto? _responseData;
+
+    try {
+final rawData = _response.data;
+_responseData = rawData == null ? null : deserialize<MachineDto, MachineDto>(rawData, 'MachineDto', growable: true);
+
+    } catch (error, stackTrace) {
+      throw DioException(
+        requestOptions: _response.requestOptions,
+        response: _response,
+        type: DioExceptionType.unknown,
+        error: error,
+        stackTrace: stackTrace,
+      );
+    }
+
+    return Response<MachineDto>(
+      data: _responseData,
+      headers: _response.headers,
+      isRedirect: _response.isRedirect,
+      requestOptions: _response.requestOptions,
+      redirects: _response.redirects,
+      statusCode: _response.statusCode,
+      statusMessage: _response.statusMessage,
+      extra: _response.extra,
+    );
   }
 
-  /// machineControllerGetByIdV1
+  /// Get a machine by id
   /// 
   ///
   /// Parameters:
@@ -209,9 +260,9 @@ _bodyData=jsonEncode(editMachineDto);
   /// * [onSendProgress] - A [ProgressCallback] that can be used to get the send progress
   /// * [onReceiveProgress] - A [ProgressCallback] that can be used to get the receive progress
   ///
-  /// Returns a [Future]
+  /// Returns a [Future] containing a [Response] with a [MachineDto] as data
   /// Throws [DioException] if API call or serialization fails
-  Future<Response<void>> machineControllerGetByIdV1({ 
+  Future<Response<MachineDto>> machineControllerGetByIdV1({ 
     required String id,
     CancelToken? cancelToken,
     Map<String, dynamic>? headers,
@@ -241,10 +292,35 @@ _bodyData=jsonEncode(editMachineDto);
       onReceiveProgress: onReceiveProgress,
     );
 
-    return _response;
+    MachineDto? _responseData;
+
+    try {
+final rawData = _response.data;
+_responseData = rawData == null ? null : deserialize<MachineDto, MachineDto>(rawData, 'MachineDto', growable: true);
+
+    } catch (error, stackTrace) {
+      throw DioException(
+        requestOptions: _response.requestOptions,
+        response: _response,
+        type: DioExceptionType.unknown,
+        error: error,
+        stackTrace: stackTrace,
+      );
+    }
+
+    return Response<MachineDto>(
+      data: _responseData,
+      headers: _response.headers,
+      isRedirect: _response.isRedirect,
+      requestOptions: _response.requestOptions,
+      redirects: _response.redirects,
+      statusCode: _response.statusCode,
+      statusMessage: _response.statusMessage,
+      extra: _response.extra,
+    );
   }
 
-  /// machineControllerListV1
+  /// List machines (no pagination)
   /// 
   ///
   /// Parameters:
@@ -259,9 +335,9 @@ _bodyData=jsonEncode(editMachineDto);
   /// * [onSendProgress] - A [ProgressCallback] that can be used to get the send progress
   /// * [onReceiveProgress] - A [ProgressCallback] that can be used to get the receive progress
   ///
-  /// Returns a [Future]
+  /// Returns a [Future] containing a [Response] with a [List<MachineDto>] as data
   /// Throws [DioException] if API call or serialization fails
-  Future<Response<void>> machineControllerListV1({ 
+  Future<Response<List<MachineDto>>> machineControllerListV1({ 
     String? laundryId,
     String? personId,
     String? type,
@@ -302,10 +378,35 @@ _bodyData=jsonEncode(editMachineDto);
       onReceiveProgress: onReceiveProgress,
     );
 
-    return _response;
+    List<MachineDto>? _responseData;
+
+    try {
+final rawData = _response.data;
+_responseData = rawData == null ? null : deserialize<List<MachineDto>, MachineDto>(rawData, 'List<MachineDto>', growable: true);
+
+    } catch (error, stackTrace) {
+      throw DioException(
+        requestOptions: _response.requestOptions,
+        response: _response,
+        type: DioExceptionType.unknown,
+        error: error,
+        stackTrace: stackTrace,
+      );
+    }
+
+    return Response<List<MachineDto>>(
+      data: _responseData,
+      headers: _response.headers,
+      isRedirect: _response.isRedirect,
+      requestOptions: _response.requestOptions,
+      redirects: _response.redirects,
+      statusCode: _response.statusCode,
+      statusMessage: _response.statusMessage,
+      extra: _response.extra,
+    );
   }
 
-  /// machineControllerOutOfOrderV1
+  /// Set machine as out of order
   /// 
   ///
   /// Parameters:
@@ -352,7 +453,7 @@ _bodyData=jsonEncode(editMachineDto);
     return _response;
   }
 
-  /// machineControllerPauseV1
+  /// Pause current program
   /// 
   ///
   /// Parameters:
@@ -399,7 +500,7 @@ _bodyData=jsonEncode(editMachineDto);
     return _response;
   }
 
-  /// machineControllerRemoveV1
+  /// Delete a machine
   /// 
   ///
   /// Parameters:
@@ -446,7 +547,7 @@ _bodyData=jsonEncode(editMachineDto);
     return _response;
   }
 
-  /// machineControllerResumeV1
+  /// Resume paused program
   /// 
   ///
   /// Parameters:
@@ -493,7 +594,7 @@ _bodyData=jsonEncode(editMachineDto);
     return _response;
   }
 
-  /// machineControllerStartV1
+  /// Start a program on a machine
   /// 
   ///
   /// Parameters:
@@ -542,7 +643,7 @@ _bodyData=jsonEncode(editMachineDto);
     return _response;
   }
 
-  /// machineControllerStopV1
+  /// Stop program and mark machine as available
   /// 
   ///
   /// Parameters:

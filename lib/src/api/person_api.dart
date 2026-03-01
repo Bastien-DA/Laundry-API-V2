@@ -11,6 +11,7 @@ import 'package:dio/dio.dart';
 
 import 'package:laundry_api_sdk/src/model/create_person_dto.dart';
 import 'package:laundry_api_sdk/src/model/edit_person_dto.dart';
+import 'package:laundry_api_sdk/src/model/person_dto.dart';
 
 class PersonApi {
 
@@ -18,7 +19,7 @@ class PersonApi {
 
   const PersonApi(this._dio);
 
-  /// personControllerCreateV1
+  /// Create a person
   /// 
   ///
   /// Parameters:
@@ -30,9 +31,9 @@ class PersonApi {
   /// * [onSendProgress] - A [ProgressCallback] that can be used to get the send progress
   /// * [onReceiveProgress] - A [ProgressCallback] that can be used to get the receive progress
   ///
-  /// Returns a [Future]
+  /// Returns a [Future] containing a [Response] with a [PersonDto] as data
   /// Throws [DioException] if API call or serialization fails
-  Future<Response<void>> personControllerCreateV1({ 
+  Future<Response<PersonDto>> personControllerCreateV1({ 
     required CreatePersonDto createPersonDto,
     CancelToken? cancelToken,
     Map<String, dynamic>? headers,
@@ -80,10 +81,35 @@ _bodyData=jsonEncode(createPersonDto);
       onReceiveProgress: onReceiveProgress,
     );
 
-    return _response;
+    PersonDto? _responseData;
+
+    try {
+final rawData = _response.data;
+_responseData = rawData == null ? null : deserialize<PersonDto, PersonDto>(rawData, 'PersonDto', growable: true);
+
+    } catch (error, stackTrace) {
+      throw DioException(
+        requestOptions: _response.requestOptions,
+        response: _response,
+        type: DioExceptionType.unknown,
+        error: error,
+        stackTrace: stackTrace,
+      );
+    }
+
+    return Response<PersonDto>(
+      data: _responseData,
+      headers: _response.headers,
+      isRedirect: _response.isRedirect,
+      requestOptions: _response.requestOptions,
+      redirects: _response.redirects,
+      statusCode: _response.statusCode,
+      statusMessage: _response.statusMessage,
+      extra: _response.extra,
+    );
   }
 
-  /// personControllerEditV1
+  /// Edit a person
   /// 
   ///
   /// Parameters:
@@ -96,9 +122,9 @@ _bodyData=jsonEncode(createPersonDto);
   /// * [onSendProgress] - A [ProgressCallback] that can be used to get the send progress
   /// * [onReceiveProgress] - A [ProgressCallback] that can be used to get the receive progress
   ///
-  /// Returns a [Future]
+  /// Returns a [Future] containing a [Response] with a [PersonDto] as data
   /// Throws [DioException] if API call or serialization fails
-  Future<Response<void>> personControllerEditV1({ 
+  Future<Response<PersonDto>> personControllerEditV1({ 
     required String id,
     required EditPersonDto editPersonDto,
     CancelToken? cancelToken,
@@ -147,10 +173,35 @@ _bodyData=jsonEncode(editPersonDto);
       onReceiveProgress: onReceiveProgress,
     );
 
-    return _response;
+    PersonDto? _responseData;
+
+    try {
+final rawData = _response.data;
+_responseData = rawData == null ? null : deserialize<PersonDto, PersonDto>(rawData, 'PersonDto', growable: true);
+
+    } catch (error, stackTrace) {
+      throw DioException(
+        requestOptions: _response.requestOptions,
+        response: _response,
+        type: DioExceptionType.unknown,
+        error: error,
+        stackTrace: stackTrace,
+      );
+    }
+
+    return Response<PersonDto>(
+      data: _responseData,
+      headers: _response.headers,
+      isRedirect: _response.isRedirect,
+      requestOptions: _response.requestOptions,
+      redirects: _response.redirects,
+      statusCode: _response.statusCode,
+      statusMessage: _response.statusMessage,
+      extra: _response.extra,
+    );
   }
 
-  /// personControllerGetByIdV1
+  /// Get a person by id
   /// 
   ///
   /// Parameters:
@@ -162,9 +213,9 @@ _bodyData=jsonEncode(editPersonDto);
   /// * [onSendProgress] - A [ProgressCallback] that can be used to get the send progress
   /// * [onReceiveProgress] - A [ProgressCallback] that can be used to get the receive progress
   ///
-  /// Returns a [Future]
+  /// Returns a [Future] containing a [Response] with a [PersonDto] as data
   /// Throws [DioException] if API call or serialization fails
-  Future<Response<void>> personControllerGetByIdV1({ 
+  Future<Response<PersonDto>> personControllerGetByIdV1({ 
     required String id,
     CancelToken? cancelToken,
     Map<String, dynamic>? headers,
@@ -194,10 +245,35 @@ _bodyData=jsonEncode(editPersonDto);
       onReceiveProgress: onReceiveProgress,
     );
 
-    return _response;
+    PersonDto? _responseData;
+
+    try {
+final rawData = _response.data;
+_responseData = rawData == null ? null : deserialize<PersonDto, PersonDto>(rawData, 'PersonDto', growable: true);
+
+    } catch (error, stackTrace) {
+      throw DioException(
+        requestOptions: _response.requestOptions,
+        response: _response,
+        type: DioExceptionType.unknown,
+        error: error,
+        stackTrace: stackTrace,
+      );
+    }
+
+    return Response<PersonDto>(
+      data: _responseData,
+      headers: _response.headers,
+      isRedirect: _response.isRedirect,
+      requestOptions: _response.requestOptions,
+      redirects: _response.redirects,
+      statusCode: _response.statusCode,
+      statusMessage: _response.statusMessage,
+      extra: _response.extra,
+    );
   }
 
-  /// personControllerListV1
+  /// List persons (no pagination)
   /// 
   ///
   /// Parameters:
@@ -214,9 +290,9 @@ _bodyData=jsonEncode(editPersonDto);
   /// * [onSendProgress] - A [ProgressCallback] that can be used to get the send progress
   /// * [onReceiveProgress] - A [ProgressCallback] that can be used to get the receive progress
   ///
-  /// Returns a [Future]
+  /// Returns a [Future] containing a [Response] with a [List<PersonDto>] as data
   /// Throws [DioException] if API call or serialization fails
-  Future<Response<void>> personControllerListV1({ 
+  Future<Response<List<PersonDto>>> personControllerListV1({ 
     String? usernameContains,
     String? personType,
     String? laundryId,
@@ -261,10 +337,35 @@ _bodyData=jsonEncode(editPersonDto);
       onReceiveProgress: onReceiveProgress,
     );
 
-    return _response;
+    List<PersonDto>? _responseData;
+
+    try {
+final rawData = _response.data;
+_responseData = rawData == null ? null : deserialize<List<PersonDto>, PersonDto>(rawData, 'List<PersonDto>', growable: true);
+
+    } catch (error, stackTrace) {
+      throw DioException(
+        requestOptions: _response.requestOptions,
+        response: _response,
+        type: DioExceptionType.unknown,
+        error: error,
+        stackTrace: stackTrace,
+      );
+    }
+
+    return Response<List<PersonDto>>(
+      data: _responseData,
+      headers: _response.headers,
+      isRedirect: _response.isRedirect,
+      requestOptions: _response.requestOptions,
+      redirects: _response.redirects,
+      statusCode: _response.statusCode,
+      statusMessage: _response.statusMessage,
+      extra: _response.extra,
+    );
   }
 
-  /// personControllerRemoveV1
+  /// Delete a person
   /// 
   ///
   /// Parameters:

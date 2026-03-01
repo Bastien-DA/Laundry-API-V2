@@ -10,6 +10,7 @@ import 'package:laundry_api_sdk/src/deserialize.dart';
 import 'package:dio/dio.dart';
 
 import 'package:laundry_api_sdk/src/model/edit_user_dto.dart';
+import 'package:laundry_api_sdk/src/model/user_dto.dart';
 
 class UserApi {
 
@@ -17,7 +18,7 @@ class UserApi {
 
   const UserApi(this._dio);
 
-  /// userControllerEditV1
+  /// Edit a user
   /// 
   ///
   /// Parameters:
@@ -30,9 +31,9 @@ class UserApi {
   /// * [onSendProgress] - A [ProgressCallback] that can be used to get the send progress
   /// * [onReceiveProgress] - A [ProgressCallback] that can be used to get the receive progress
   ///
-  /// Returns a [Future]
+  /// Returns a [Future] containing a [Response] with a [UserDto] as data
   /// Throws [DioException] if API call or serialization fails
-  Future<Response<void>> userControllerEditV1({ 
+  Future<Response<UserDto>> userControllerEditV1({ 
     required String id,
     required EditUserDto editUserDto,
     CancelToken? cancelToken,
@@ -81,10 +82,35 @@ _bodyData=jsonEncode(editUserDto);
       onReceiveProgress: onReceiveProgress,
     );
 
-    return _response;
+    UserDto? _responseData;
+
+    try {
+final rawData = _response.data;
+_responseData = rawData == null ? null : deserialize<UserDto, UserDto>(rawData, 'UserDto', growable: true);
+
+    } catch (error, stackTrace) {
+      throw DioException(
+        requestOptions: _response.requestOptions,
+        response: _response,
+        type: DioExceptionType.unknown,
+        error: error,
+        stackTrace: stackTrace,
+      );
+    }
+
+    return Response<UserDto>(
+      data: _responseData,
+      headers: _response.headers,
+      isRedirect: _response.isRedirect,
+      requestOptions: _response.requestOptions,
+      redirects: _response.redirects,
+      statusCode: _response.statusCode,
+      statusMessage: _response.statusMessage,
+      extra: _response.extra,
+    );
   }
 
-  /// userControllerGetByIdV1
+  /// Get a user by id
   /// 
   ///
   /// Parameters:
@@ -96,9 +122,9 @@ _bodyData=jsonEncode(editUserDto);
   /// * [onSendProgress] - A [ProgressCallback] that can be used to get the send progress
   /// * [onReceiveProgress] - A [ProgressCallback] that can be used to get the receive progress
   ///
-  /// Returns a [Future]
+  /// Returns a [Future] containing a [Response] with a [UserDto] as data
   /// Throws [DioException] if API call or serialization fails
-  Future<Response<void>> userControllerGetByIdV1({ 
+  Future<Response<UserDto>> userControllerGetByIdV1({ 
     required String id,
     CancelToken? cancelToken,
     Map<String, dynamic>? headers,
@@ -128,10 +154,35 @@ _bodyData=jsonEncode(editUserDto);
       onReceiveProgress: onReceiveProgress,
     );
 
-    return _response;
+    UserDto? _responseData;
+
+    try {
+final rawData = _response.data;
+_responseData = rawData == null ? null : deserialize<UserDto, UserDto>(rawData, 'UserDto', growable: true);
+
+    } catch (error, stackTrace) {
+      throw DioException(
+        requestOptions: _response.requestOptions,
+        response: _response,
+        type: DioExceptionType.unknown,
+        error: error,
+        stackTrace: stackTrace,
+      );
+    }
+
+    return Response<UserDto>(
+      data: _responseData,
+      headers: _response.headers,
+      isRedirect: _response.isRedirect,
+      requestOptions: _response.requestOptions,
+      redirects: _response.redirects,
+      statusCode: _response.statusCode,
+      statusMessage: _response.statusMessage,
+      extra: _response.extra,
+    );
   }
 
-  /// userControllerListV1
+  /// List users (no pagination)
   /// 
   ///
   /// Parameters:
@@ -145,9 +196,9 @@ _bodyData=jsonEncode(editUserDto);
   /// * [onSendProgress] - A [ProgressCallback] that can be used to get the send progress
   /// * [onReceiveProgress] - A [ProgressCallback] that can be used to get the receive progress
   ///
-  /// Returns a [Future]
+  /// Returns a [Future] containing a [Response] with a [List<UserDto>] as data
   /// Throws [DioException] if API call or serialization fails
-  Future<Response<void>> userControllerListV1({ 
+  Future<Response<List<UserDto>>> userControllerListV1({ 
     String? emailContains,
     bool? hasPerson,
     String? personId,
@@ -186,10 +237,35 @@ _bodyData=jsonEncode(editUserDto);
       onReceiveProgress: onReceiveProgress,
     );
 
-    return _response;
+    List<UserDto>? _responseData;
+
+    try {
+final rawData = _response.data;
+_responseData = rawData == null ? null : deserialize<List<UserDto>, UserDto>(rawData, 'List<UserDto>', growable: true);
+
+    } catch (error, stackTrace) {
+      throw DioException(
+        requestOptions: _response.requestOptions,
+        response: _response,
+        type: DioExceptionType.unknown,
+        error: error,
+        stackTrace: stackTrace,
+      );
+    }
+
+    return Response<List<UserDto>>(
+      data: _responseData,
+      headers: _response.headers,
+      isRedirect: _response.isRedirect,
+      requestOptions: _response.requestOptions,
+      redirects: _response.redirects,
+      statusCode: _response.statusCode,
+      statusMessage: _response.statusMessage,
+      extra: _response.extra,
+    );
   }
 
-  /// userControllerRemoveV1
+  /// Delete a user
   /// 
   ///
   /// Parameters:

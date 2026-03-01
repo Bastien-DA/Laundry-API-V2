@@ -7,26 +7,36 @@ void main() {
   final instance = LaundryApiSdk().getLaundryApi();
 
   group(LaundryApi, () {
-    //Future laundryControllerCreateV1(CreateLaundryDto createLaundryDto) async
+    // Create a laundry
+    //
+    //Future<LaundryDto> laundryControllerCreateV1(CreateLaundryDto createLaundryDto) async
     test('test laundryControllerCreateV1', () async {
       // TODO
     });
 
-    //Future laundryControllerEditV1(String id, EditLaundryDto editLaundryDto) async
+    // Edit a laundry
+    //
+    //Future<LaundryDto> laundryControllerEditV1(String id, EditLaundryDto editLaundryDto) async
     test('test laundryControllerEditV1', () async {
       // TODO
     });
 
-    //Future laundryControllerGetByIdV1(String id) async
+    // Get a laundry by id
+    //
+    //Future<LaundryDto> laundryControllerGetByIdV1(String id) async
     test('test laundryControllerGetByIdV1', () async {
       // TODO
     });
 
-    //Future laundryControllerListV1({ String nameContains, String personId, String machineId }) async
+    // List laundries (no pagination)
+    //
+    //Future<List<LaundryDto>> laundryControllerListV1({ String nameContains, String personId, String machineId }) async
     test('test laundryControllerListV1', () async {
       // TODO
     });
 
+    // Delete a laundry
+    //
     //Future laundryControllerRemoveV1(String id) async
     test('test laundryControllerRemoveV1', () async {
       // TODO

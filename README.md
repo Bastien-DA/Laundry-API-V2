@@ -52,7 +52,8 @@ final api = LaundryApiSdk().getAuthApi();
 final LoginDto loginDto = ; // LoginDto | 
 
 try {
-    api.authControllerLoginV1(loginDto);
+    final response = await api.authControllerLoginV1(loginDto);
+    print(response);
 } catch on DioException (e) {
     print("Exception when calling AuthApi->authControllerLoginV1: $e\n");
 }
@@ -65,39 +66,39 @@ All URIs are relative to *http://localhost*
 
 Class | Method | HTTP request | Description
 ------------ | ------------- | ------------- | -------------
-[*AuthApi*](doc/AuthApi.md) | [**authControllerLoginV1**](doc/AuthApi.md#authcontrollerloginv1) | **POST** /api/v1/auth/login | 
-[*AuthApi*](doc/AuthApi.md) | [**authControllerMeV1**](doc/AuthApi.md#authcontrollermev1) | **GET** /api/v1/auth/me | 
-[*AuthApi*](doc/AuthApi.md) | [**authControllerRegisterV1**](doc/AuthApi.md#authcontrollerregisterv1) | **POST** /api/v1/auth/register | 
-[*LaundryApi*](doc/LaundryApi.md) | [**laundryControllerCreateV1**](doc/LaundryApi.md#laundrycontrollercreatev1) | **POST** /api/v1/laundries | 
-[*LaundryApi*](doc/LaundryApi.md) | [**laundryControllerEditV1**](doc/LaundryApi.md#laundrycontrollereditv1) | **PATCH** /api/v1/laundries/{id} | 
-[*LaundryApi*](doc/LaundryApi.md) | [**laundryControllerGetByIdV1**](doc/LaundryApi.md#laundrycontrollergetbyidv1) | **GET** /api/v1/laundries/{id} | 
-[*LaundryApi*](doc/LaundryApi.md) | [**laundryControllerListV1**](doc/LaundryApi.md#laundrycontrollerlistv1) | **GET** /api/v1/laundries | 
-[*LaundryApi*](doc/LaundryApi.md) | [**laundryControllerRemoveV1**](doc/LaundryApi.md#laundrycontrollerremovev1) | **DELETE** /api/v1/laundries/{id} | 
-[*MachineApi*](doc/MachineApi.md) | [**machineControllerAvailableV1**](doc/MachineApi.md#machinecontrolleravailablev1) | **POST** /api/v1/machines/{id}/available | 
-[*MachineApi*](doc/MachineApi.md) | [**machineControllerCreateV1**](doc/MachineApi.md#machinecontrollercreatev1) | **POST** /api/v1/machines | 
-[*MachineApi*](doc/MachineApi.md) | [**machineControllerEditV1**](doc/MachineApi.md#machinecontrollereditv1) | **PATCH** /api/v1/machines/{id} | 
-[*MachineApi*](doc/MachineApi.md) | [**machineControllerGetByIdV1**](doc/MachineApi.md#machinecontrollergetbyidv1) | **GET** /api/v1/machines/{id} | 
-[*MachineApi*](doc/MachineApi.md) | [**machineControllerListV1**](doc/MachineApi.md#machinecontrollerlistv1) | **GET** /api/v1/machines | 
-[*MachineApi*](doc/MachineApi.md) | [**machineControllerOutOfOrderV1**](doc/MachineApi.md#machinecontrolleroutoforderv1) | **POST** /api/v1/machines/{id}/out-of-order | 
-[*MachineApi*](doc/MachineApi.md) | [**machineControllerPauseV1**](doc/MachineApi.md#machinecontrollerpausev1) | **POST** /api/v1/machines/{id}/pause | 
-[*MachineApi*](doc/MachineApi.md) | [**machineControllerRemoveV1**](doc/MachineApi.md#machinecontrollerremovev1) | **DELETE** /api/v1/machines/{id} | 
-[*MachineApi*](doc/MachineApi.md) | [**machineControllerResumeV1**](doc/MachineApi.md#machinecontrollerresumev1) | **POST** /api/v1/machines/{id}/resume | 
-[*MachineApi*](doc/MachineApi.md) | [**machineControllerStartV1**](doc/MachineApi.md#machinecontrollerstartv1) | **POST** /api/v1/machines/{id}/start/{programId} | 
-[*MachineApi*](doc/MachineApi.md) | [**machineControllerStopV1**](doc/MachineApi.md#machinecontrollerstopv1) | **POST** /api/v1/machines/{id}/stop | 
-[*PersonApi*](doc/PersonApi.md) | [**personControllerCreateV1**](doc/PersonApi.md#personcontrollercreatev1) | **POST** /api/v1/persons | 
-[*PersonApi*](doc/PersonApi.md) | [**personControllerEditV1**](doc/PersonApi.md#personcontrollereditv1) | **PATCH** /api/v1/persons/{id} | 
-[*PersonApi*](doc/PersonApi.md) | [**personControllerGetByIdV1**](doc/PersonApi.md#personcontrollergetbyidv1) | **GET** /api/v1/persons/{id} | 
-[*PersonApi*](doc/PersonApi.md) | [**personControllerListV1**](doc/PersonApi.md#personcontrollerlistv1) | **GET** /api/v1/persons | 
-[*PersonApi*](doc/PersonApi.md) | [**personControllerRemoveV1**](doc/PersonApi.md#personcontrollerremovev1) | **DELETE** /api/v1/persons/{id} | 
-[*ProgramApi*](doc/ProgramApi.md) | [**programControllerCreateV1**](doc/ProgramApi.md#programcontrollercreatev1) | **POST** /api/v1/programs | 
-[*ProgramApi*](doc/ProgramApi.md) | [**programControllerEditV1**](doc/ProgramApi.md#programcontrollereditv1) | **PATCH** /api/v1/programs/{id} | 
-[*ProgramApi*](doc/ProgramApi.md) | [**programControllerGetByIdV1**](doc/ProgramApi.md#programcontrollergetbyidv1) | **GET** /api/v1/programs/{id} | 
-[*ProgramApi*](doc/ProgramApi.md) | [**programControllerListV1**](doc/ProgramApi.md#programcontrollerlistv1) | **GET** /api/v1/programs | 
-[*ProgramApi*](doc/ProgramApi.md) | [**programControllerRemoveV1**](doc/ProgramApi.md#programcontrollerremovev1) | **DELETE** /api/v1/programs/{id} | 
-[*UserApi*](doc/UserApi.md) | [**userControllerEditV1**](doc/UserApi.md#usercontrollereditv1) | **PATCH** /api/v1/users/{id} | 
-[*UserApi*](doc/UserApi.md) | [**userControllerGetByIdV1**](doc/UserApi.md#usercontrollergetbyidv1) | **GET** /api/v1/users/{id} | 
-[*UserApi*](doc/UserApi.md) | [**userControllerListV1**](doc/UserApi.md#usercontrollerlistv1) | **GET** /api/v1/users | 
-[*UserApi*](doc/UserApi.md) | [**userControllerRemoveV1**](doc/UserApi.md#usercontrollerremovev1) | **DELETE** /api/v1/users/{id} | 
+[*AuthApi*](doc/AuthApi.md) | [**authControllerLoginV1**](doc/AuthApi.md#authcontrollerloginv1) | **POST** /api/v1/auth/login | Login user and return JWT
+[*AuthApi*](doc/AuthApi.md) | [**authControllerMeV1**](doc/AuthApi.md#authcontrollermev1) | **GET** /api/v1/auth/me | Get current authenticated user
+[*AuthApi*](doc/AuthApi.md) | [**authControllerRegisterV1**](doc/AuthApi.md#authcontrollerregisterv1) | **POST** /api/v1/auth/register | Register a new user
+[*LaundryApi*](doc/LaundryApi.md) | [**laundryControllerCreateV1**](doc/LaundryApi.md#laundrycontrollercreatev1) | **POST** /api/v1/laundries | Create a laundry
+[*LaundryApi*](doc/LaundryApi.md) | [**laundryControllerEditV1**](doc/LaundryApi.md#laundrycontrollereditv1) | **PATCH** /api/v1/laundries/{id} | Edit a laundry
+[*LaundryApi*](doc/LaundryApi.md) | [**laundryControllerGetByIdV1**](doc/LaundryApi.md#laundrycontrollergetbyidv1) | **GET** /api/v1/laundries/{id} | Get a laundry by id
+[*LaundryApi*](doc/LaundryApi.md) | [**laundryControllerListV1**](doc/LaundryApi.md#laundrycontrollerlistv1) | **GET** /api/v1/laundries | List laundries (no pagination)
+[*LaundryApi*](doc/LaundryApi.md) | [**laundryControllerRemoveV1**](doc/LaundryApi.md#laundrycontrollerremovev1) | **DELETE** /api/v1/laundries/{id} | Delete a laundry
+[*MachineApi*](doc/MachineApi.md) | [**machineControllerAvailableV1**](doc/MachineApi.md#machinecontrolleravailablev1) | **POST** /api/v1/machines/{id}/available | Mark machine as available (from OUT_OF_ORDER)
+[*MachineApi*](doc/MachineApi.md) | [**machineControllerCreateV1**](doc/MachineApi.md#machinecontrollercreatev1) | **POST** /api/v1/machines | Create a machine
+[*MachineApi*](doc/MachineApi.md) | [**machineControllerEditV1**](doc/MachineApi.md#machinecontrollereditv1) | **PATCH** /api/v1/machines/{id} | Edit a machine
+[*MachineApi*](doc/MachineApi.md) | [**machineControllerGetByIdV1**](doc/MachineApi.md#machinecontrollergetbyidv1) | **GET** /api/v1/machines/{id} | Get a machine by id
+[*MachineApi*](doc/MachineApi.md) | [**machineControllerListV1**](doc/MachineApi.md#machinecontrollerlistv1) | **GET** /api/v1/machines | List machines (no pagination)
+[*MachineApi*](doc/MachineApi.md) | [**machineControllerOutOfOrderV1**](doc/MachineApi.md#machinecontrolleroutoforderv1) | **POST** /api/v1/machines/{id}/out-of-order | Set machine as out of order
+[*MachineApi*](doc/MachineApi.md) | [**machineControllerPauseV1**](doc/MachineApi.md#machinecontrollerpausev1) | **POST** /api/v1/machines/{id}/pause | Pause current program
+[*MachineApi*](doc/MachineApi.md) | [**machineControllerRemoveV1**](doc/MachineApi.md#machinecontrollerremovev1) | **DELETE** /api/v1/machines/{id} | Delete a machine
+[*MachineApi*](doc/MachineApi.md) | [**machineControllerResumeV1**](doc/MachineApi.md#machinecontrollerresumev1) | **POST** /api/v1/machines/{id}/resume | Resume paused program
+[*MachineApi*](doc/MachineApi.md) | [**machineControllerStartV1**](doc/MachineApi.md#machinecontrollerstartv1) | **POST** /api/v1/machines/{id}/start/{programId} | Start a program on a machine
+[*MachineApi*](doc/MachineApi.md) | [**machineControllerStopV1**](doc/MachineApi.md#machinecontrollerstopv1) | **POST** /api/v1/machines/{id}/stop | Stop program and mark machine as available
+[*PersonApi*](doc/PersonApi.md) | [**personControllerCreateV1**](doc/PersonApi.md#personcontrollercreatev1) | **POST** /api/v1/persons | Create a person
+[*PersonApi*](doc/PersonApi.md) | [**personControllerEditV1**](doc/PersonApi.md#personcontrollereditv1) | **PATCH** /api/v1/persons/{id} | Edit a person
+[*PersonApi*](doc/PersonApi.md) | [**personControllerGetByIdV1**](doc/PersonApi.md#personcontrollergetbyidv1) | **GET** /api/v1/persons/{id} | Get a person by id
+[*PersonApi*](doc/PersonApi.md) | [**personControllerListV1**](doc/PersonApi.md#personcontrollerlistv1) | **GET** /api/v1/persons | List persons (no pagination)
+[*PersonApi*](doc/PersonApi.md) | [**personControllerRemoveV1**](doc/PersonApi.md#personcontrollerremovev1) | **DELETE** /api/v1/persons/{id} | Delete a person
+[*ProgramApi*](doc/ProgramApi.md) | [**programControllerCreateV1**](doc/ProgramApi.md#programcontrollercreatev1) | **POST** /api/v1/programs | Create a program
+[*ProgramApi*](doc/ProgramApi.md) | [**programControllerEditV1**](doc/ProgramApi.md#programcontrollereditv1) | **PATCH** /api/v1/programs/{id} | Edit a program
+[*ProgramApi*](doc/ProgramApi.md) | [**programControllerGetByIdV1**](doc/ProgramApi.md#programcontrollergetbyidv1) | **GET** /api/v1/programs/{id} | Get a program by id
+[*ProgramApi*](doc/ProgramApi.md) | [**programControllerListV1**](doc/ProgramApi.md#programcontrollerlistv1) | **GET** /api/v1/programs | List programs (no pagination)
+[*ProgramApi*](doc/ProgramApi.md) | [**programControllerRemoveV1**](doc/ProgramApi.md#programcontrollerremovev1) | **DELETE** /api/v1/programs/{id} | Delete a program
+[*UserApi*](doc/UserApi.md) | [**userControllerEditV1**](doc/UserApi.md#usercontrollereditv1) | **PATCH** /api/v1/users/{id} | Edit a user
+[*UserApi*](doc/UserApi.md) | [**userControllerGetByIdV1**](doc/UserApi.md#usercontrollergetbyidv1) | **GET** /api/v1/users/{id} | Get a user by id
+[*UserApi*](doc/UserApi.md) | [**userControllerListV1**](doc/UserApi.md#usercontrollerlistv1) | **GET** /api/v1/users | List users (no pagination)
+[*UserApi*](doc/UserApi.md) | [**userControllerRemoveV1**](doc/UserApi.md#usercontrollerremovev1) | **DELETE** /api/v1/users/{id} | Delete a user
 
 
 ## Documentation For Models
@@ -111,8 +112,13 @@ Class | Method | HTTP request | Description
  - [EditPersonDto](doc/EditPersonDto.md)
  - [EditProgramDto](doc/EditProgramDto.md)
  - [EditUserDto](doc/EditUserDto.md)
+ - [LaundryDto](doc/LaundryDto.md)
  - [LoginDto](doc/LoginDto.md)
+ - [MachineDto](doc/MachineDto.md)
+ - [PersonDto](doc/PersonDto.md)
+ - [ProgramDto](doc/ProgramDto.md)
  - [RegisterDto](doc/RegisterDto.md)
+ - [UserDto](doc/UserDto.md)
 
 
 ## Documentation For Authorization
