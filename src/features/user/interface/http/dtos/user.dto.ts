@@ -11,5 +11,5 @@ export class UserDto {
   createdAt!: number;
 
   @ApiProperty({ nullable: true, example: 'uuid' })
-  personId!: string | null;
+  personId?: string;
 }
