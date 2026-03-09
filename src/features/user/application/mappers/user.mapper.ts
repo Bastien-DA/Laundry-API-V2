@@ -19,7 +19,7 @@ export class UserMapper implements AbstractMapper<
       id: e.id,
       email: e.email,
       createdAt: e.createdAt.getTime(),
-      personId: e.personId,
+      personId: e.personId ?? undefined,
     };
   }
 
