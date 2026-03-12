@@ -1,4 +1,4 @@
-name: Generate Flutter SDK (NestJS)
+name: Generate SDKs (Flutter & TS)
 
 on:
   push:
@@ -27,7 +27,6 @@ jobs:
           --health-timeout=5s
           --health-retries=20
 
-    # ⚠️ Ne pas mettre NODE_ENV=production ici (sinon devDependencies parfois omises)
     env:
       PORT: "3000"
       DATABASE_URL: postgresql://postgres:postgres@localhost:5432/app?schema=public
@@ -38,159 +37,103 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Setup Node
+      - name: Setup Environments (Node, Java, Flutter)
         uses: actions/setup-node@v4
         with:
           node-version: "20"
           cache: "npm"
 
-      - name: Install dependencies (include dev)
-        run: npm ci --include=dev
-
-      - name: Prisma generate
-        run: |
-          # Prisma est dans deps chez toi, donc OK
-          npx prisma generate --config prisma.config.ts || npx prisma generate
-
-      - name: Prisma migrate (CI database)
-        run: |
-          if [ -d prisma/migrations ]; then
-            npx prisma migrate deploy --config prisma.config.ts || npx prisma migrate deploy || true
-          else
-            echo "No migrations detected, skipping"
-          fi
-
-      - name: Build API
-        run: npm run build
-
-      - name: Run API (background)
-        env:
-          NODE_ENV: production
-        run: |
-          set -euxo pipefail
-
-          # Trouver le main.js compilé
-          MAIN_JS="$(find dist -type f -name 'main.js' | head -n 1 || true)"
-          if [ -z "$MAIN_JS" ]; then
-            echo "Aucun main.js trouvé dans dist/. Contenu dist/:"
-            ls -R dist || true
-            exit 1
-          fi
-
-          echo "Starting API with: node $MAIN_JS"
-          node "$MAIN_JS" &
-          echo $! > api.pid
-
-          SWAGGER_URL="http://localhost:3000/docs-json"
-
-          for i in {1..60}; do
-            if curl -sSf "$SWAGGER_URL" >/dev/null 2>&1; then
-              echo "SWAGGER_JSON_URL=$SWAGGER_URL" >> "$GITHUB_ENV"
-              echo "Swagger OK at: $SWAGGER_URL"
-              exit 0
-            fi
-            sleep 2
-          done
-
-          echo "Swagger JSON introuvable sur $SWAGGER_URL"
-          ps aux | grep "node" || true
-          echo "Dist tree:"
-          ls -R dist || true
-          exit 1
-
-      - name: Download swagger.json
-        run: |
-          set -euxo pipefail
-          curl -sSf "$SWAGGER_JSON_URL" -o swagger.json
-          ls -lah swagger.json
-
-      - name: Setup Java (for OpenAPI Generator)
-        uses: actions/setup-java@v4
+      - uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: "17"
 
-      - name: Install OpenAPI Generator
-        run: |
-          set -euxo pipefail
-          wget -q https://repo1.maven.org/maven2/org/openapitools/openapi-generator-cli/7.17.0/openapi-generator-cli-7.17.0.jar -O openapi-generator-cli.jar
-          ls -lah openapi-generator-cli.jar
-
-      - name: Generate Flutter SDK (dart-dio)
-        run: |
-          set -euxo pipefail
-          rm -rf sdk
-          mkdir -p sdk
-          java -jar openapi-generator-cli.jar generate \
-            -i swagger.json \
-            -g dart-dio \
-            -o sdk \
-            --additional-properties=pubName=laundry_api_sdk,serializationLibrary=json_serializable
-
-      - name: Setup Flutter
-        uses: subosito/flutter-action@v2
+      - uses: subosito/flutter-action@v2
         with:
           channel: stable
           cache: true
 
-      - name: Patch generated pubspec (Dart 3.8 + json_annotation)
-        working-directory: sdk
+      - name: Install Project Dependencies & Build API
         run: |
-          set -euxo pipefail
+          npm ci --include=dev
+          npx prisma generate
+          npm run build
 
-          if grep -q "^environment:" pubspec.yaml; then
-            sed -i 's/^  sdk: .*/  sdk: ">=3.8.0 <4.0.0"/' pubspec.yaml || true
-          else
-            printf '\nenvironment:\n  sdk: ">=3.8.0 <4.0.0"\n' >> pubspec.yaml
-          fi
-
-          if grep -q "^  json_annotation:" pubspec.yaml; then
-            sed -i 's/^  json_annotation: .*/  json_annotation: ^4.9.0/' pubspec.yaml
-          fi
-
-          cat pubspec.yaml
-
-      - name: Flutter pub get + build_runner
-        working-directory: sdk
+      - name: Run API & Export Swagger
+        env:
+          NODE_ENV: production
         run: |
-          set -euxo pipefail
+          # Lancement en arrière-plan
+          MAIN_JS="$(find dist -type f -name 'main.js' | head -n 1)"
+          node "$MAIN_JS" &
+          echo $! > api.pid
+
+          # Attente du Swagger
+          for i in {1..60}; do
+            if curl -sSf http://localhost:3000/docs-json -o swagger.json; then
+              echo "Swagger downloaded"
+              exit 0
+            fi
+            sleep 2
+          done
+          exit 1
+
+      - name: Install OpenAPI Generator
+        run: wget -q https://repo1.maven.org/maven2/org/openapitools/openapi-generator-cli/7.17.0/openapi-generator-cli-7.17.0.jar -O openapi-generator-cli.jar
+
+      # --- GENERATION FLUTTER ---
+      - name: Generate & Build Flutter SDK
+        run: |
+          java -jar openapi-generator-cli.jar generate \
+            -i swagger.json -g dart-dio -o sdk-flutter \
+            --additional-properties=pubName=laundry_api_sdk,serializationLibrary=json_serializable
+          
+          cd sdk-flutter
+          # Ton patch de version
+          sed -i 's/^  sdk: .*/  sdk: ">=3.8.0 <4.0.0"/' pubspec.yaml || true
           flutter pub get
           flutter pub run build_runner build --delete-conflicting-outputs
+          
+          mkdir -p /tmp/final-sdk-flutter
+          cp -r . /tmp/final-sdk-flutter
 
-      - name: Save SDK outside repo
+      # --- GENERATION TYPESCRIPT ---
+      - name: Generate & Build TS SDK
         run: |
-          set -euxo pipefail
-          rm -rf /tmp/sdk
-          cp -r sdk /tmp/sdk
+          java -jar openapi-generator-cli.jar generate \
+            -i swagger.json -g typescript-axios -o sdk-ts \
+            --additional-properties=npmName=@laundry/api-sdk,supportsES6=true,withInterfaces=true
+          
+          cd sdk-ts
+          npm install
+          npm run build
+          
+          mkdir -p /tmp/final-sdk-ts
+          cp -r . /tmp/final-sdk-ts
 
       - name: Stop API
         if: always()
-        run: |
-          if [ -f api.pid ]; then
-            kill "$(cat api.pid)" || true
-          fi
+        run: "[ -f api.pid ] && kill $(cat api.pid) || true"
 
-      - name: Push to sdk branch
+      # --- DEPLOY FLUTTER BRANCH ---
+      - name: Push Flutter SDK
         run: |
-          set -euxo pipefail
-
-          git config --global user.email "github-actions@github.com"
+          git config --global user.email "actions@github.com"
           git config --global user.name "GitHub Actions"
-
-          if git ls-remote --exit-code --heads origin sdk; then
-            git fetch origin sdk
-            git checkout -B sdk origin/sdk
-          else
-            git checkout -B sdk
-          fi
-
+          git fetch origin sdk || true
+          git checkout -B sdk
           rm -rf ./*
-          cp -r /tmp/sdk/* .
-
+          cp -r /tmp/final-sdk-flutter/* .
           git add .
-          if git diff --cached --quiet; then
-            echo "No changes to commit"
-          else
-            git commit -m "Update SDK"
-            git push origin sdk --force
-          fi
+          git commit -m "Update Flutter SDK" && git push origin sdk --force || echo "No changes"
+
+      # --- DEPLOY TS BRANCH ---
+      - name: Push TS SDK
+        run: |
+          # On repart du main pour être sûr d'avoir une base propre pour l'orphan
+          git checkout main
+          git checkout --orphan sdk-ts
+          rm -rf ./*
+          cp -r /tmp/final-sdk-ts/* .
+          git add .
+          git commit -m "Update TS SDK" && git push origin sdk-ts --force || echo "No changes"
