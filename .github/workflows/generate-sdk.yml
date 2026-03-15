@@ -36,6 +36,8 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Setup Environments (Node, Java, Flutter)
         uses: actions/setup-node@v4
@@ -63,12 +65,10 @@ jobs:
         env:
           NODE_ENV: production
         run: |
-          # Lancement en arrière-plan
           MAIN_JS="$(find dist -type f -name 'main.js' | head -n 1)"
           node "$MAIN_JS" &
           echo $! > api.pid
 
-          # Attente du Swagger
           for i in {1..60}; do
             if curl -sSf http://localhost:3000/docs-json -o swagger.json; then
               echo "Swagger downloaded"
@@ -85,35 +85,39 @@ jobs:
       - name: Generate & Build Flutter SDK
         run: |
           java -jar openapi-generator-cli.jar generate \
-            -i swagger.json -g dart-dio -o sdk-flutter \
+            -i swagger.json -g dart-dio -o /tmp/final-sdk-flutter \
             --additional-properties=pubName=laundry_api_sdk,serializationLibrary=json_serializable
           
-          cd sdk-flutter
-          # Ton patch de version
+          cd /tmp/final-sdk-flutter
           sed -i 's/^  sdk: .*/  sdk: ">=3.8.0 <4.0.0"/' pubspec.yaml || true
           flutter pub get
           flutter pub run build_runner build --delete-conflicting-outputs
-          
-          mkdir -p /tmp/final-sdk-flutter
-          cp -r . /tmp/final-sdk-flutter
 
       # --- GENERATION TYPESCRIPT ---
       - name: Generate & Build TS SDK
         run: |
           java -jar openapi-generator-cli.jar generate \
-            -i swagger.json -g typescript-axios -o sdk-ts \
+            -i swagger.json -g typescript-axios -o /tmp/final-sdk-ts \
             --additional-properties=npmName=@laundry/api-sdk,supportsES6=true,withInterfaces=true
           
-          cd sdk-ts
+          cd /tmp/final-sdk-ts
           
-          sed -i 's/"main": "index.js"/"main": ".\/dist\/index.js"/' package.json
-          sed -i 's/"typings": "index.d.ts"/"typings": ".\/dist\/index.d.ts"/' package.json
+          # 1. Ajustement des points d'entrée et ajout du champ 'files' pour forcer l'inclusion de dist
+          node -e "
+            const fs = require('fs');
+            const pkg = JSON.parse(fs.readFileSync('package.json', 'utf8'));
+            pkg.main = './dist/index.js';
+            pkg.typings = './dist/index.d.ts';
+            pkg.module = './dist/esm/index.js';
+            pkg.files = ['dist', 'package.json', 'README.md'];
+            fs.writeFileSync('package.json', JSON.stringify(pkg, null, 2));
+          "
           
           npm install
           npm run build
           
-          mkdir -p /tmp/final-sdk-ts
-          cp -r . /tmp/final-sdk-ts
+          # 2. Suppression des fichiers qui bloqueraient l'installation du build par npm
+          rm -f .gitignore .npmignore
 
       - name: Stop API
         if: always()
@@ -124,21 +128,27 @@ jobs:
         run: |
           git config --global user.email "actions@github.com"
           git config --global user.name "GitHub Actions"
-          git fetch origin sdk || true
           git checkout -B sdk
-          rm -rf ./*
+          git rm -rf .
           cp -r /tmp/final-sdk-flutter/* .
           git add .
-          git commit -m "Update Flutter SDK" && git push origin sdk --force || echo "No changes"
+          git commit -m "Update Flutter SDK [skip ci]" && git push origin sdk --force || echo "No changes"
 
       # --- DEPLOY TS BRANCH ---
       - name: Push TS SDK
         run: |
-          # On repart du main pour être sûr d'avoir une base propre pour l'orphan
-          git checkout main
-          git checkout --orphan sdk-ts
-          rm -rf ./*
-          cp -r /tmp/final-sdk-ts/* .
-          git add -f build || git add -f dist || echo "No build/dist folder found"
+          git config --global user.email "actions@github.com"
+          git config --global user.name "GitHub Actions"
+          git checkout --orphan sdk-ts-temp
+          git rm -rf .
+          
+          # On ne copie que ce qui est vital pour le SDK propre
+          cp -r /tmp/final-sdk-ts/dist .
+          cp /tmp/final-sdk-ts/package.json .
+          cp /tmp/final-sdk-ts/README.md . 2>/dev/null || true
+          
+          # On force l'ajout du dossier dist pour éviter tout oubli
+          git add -f dist/
           git add .
-          git commit -m "Update TS SDK" && git push origin sdk-ts --force || echo "No changes"
+          git commit -m "Update TS SDK with dist folder [skip ci]"
+          git push origin sdk-ts-temp:sdk-ts --force
