@@ -31,7 +31,7 @@ export class MachineService extends AbstractService<
     // 🔥 STATE MACHINE METHODS
     // ===============================
 
-    async startProgram(machineId: string, programId: string): Promise<void> {
+    async startProgram(machineId: string, programId: string, personId: string): Promise<void> {
         await this.prisma.$transaction(async (tx) => {
             const machine = await tx.machine.findUnique({
                 where: { id: machineId },
@@ -50,6 +50,13 @@ export class MachineService extends AbstractService<
 
             if (current === MachineStatusEnum.RUNNING)
                 throw new BadRequestException('Machine already running');
+
+            await tx.machine.update({
+                where: { id: machineId },
+                data: {
+                    person: { connect: { id: personId } },
+                },
+            });
 
             if (!machine.machineStatus) {
                 await tx.machineStatus.create({

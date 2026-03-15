@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post, Query } from '@nestjs/common';
+import {Body, Controller, Delete, Get, Param, Patch, Post, Query, Req, UseGuards} from '@nestjs/common';
 import {
     ApiBearerAuth,
     ApiCreatedResponse,
@@ -15,6 +15,7 @@ import { EditMachineDto } from './dtos/edit-machine.dto';
 import { MachineFilterDto } from './dtos/machine-filter.dto';
 import { MachineDto } from './dtos/machine.dto';
 import { Roles } from '@features/auth/infrastructure/security/roles.decorator';
+import {JwtAuthGuard} from "@features/auth/infrastructure/security/jwt-auth-guard";
 
 @Controller('machines')
 export class MachineController {
@@ -73,10 +74,10 @@ export class MachineController {
     @ApiParam({ name: 'programId', type: String })
     @ApiNoContentResponse()
     @ApiBearerAuth()
-    @Roles('ADMIN', 'TECHNICIAN')
+    @UseGuards(JwtAuthGuard)
     @Post(':id/start/:programId')
-    start(@Param('id') id: string, @Param('programId') programId: string): Promise<void> {
-        return this.service.startProgram(id, programId);
+    start(@Req() req: any, @Param('id') id: string, @Param('programId') programId: string): Promise<void> {
+        return this.service.startProgram(id, programId, req.user.person.id);
     }
 
     @ApiOperation({ summary: 'Pause current program' })
