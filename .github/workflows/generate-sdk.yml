@@ -102,7 +102,7 @@ jobs:
           
           cd /tmp/final-sdk-ts
           
-          # 1. Ajustement des points d'entrée et ajout du champ 'files' pour forcer l'inclusion de dist
+          # MODIFICATION ICI : On ajuste le package.json ET on supprime le script prepare
           node -e "
             const fs = require('fs');
             const pkg = JSON.parse(fs.readFileSync('package.json', 'utf8'));
@@ -110,13 +110,15 @@ jobs:
             pkg.typings = './dist/index.d.ts';
             pkg.module = './dist/esm/index.js';
             pkg.files = ['dist', 'package.json', 'README.md'];
+          
+            // ON SUPPRIME LE SCRIPT PREPARE POUR ÉVITER LE BUILD LOCAL
+            delete pkg.scripts.prepare;
+          
             fs.writeFileSync('package.json', JSON.stringify(pkg, null, 2));
           "
           
           npm install
           npm run build
-          
-          # 2. Suppression des fichiers qui bloqueraient l'installation du build par npm
           rm -f .gitignore .npmignore
 
       - name: Stop API
