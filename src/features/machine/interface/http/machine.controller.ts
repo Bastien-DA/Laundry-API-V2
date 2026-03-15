@@ -77,7 +77,7 @@ export class MachineController {
     @UseGuards(JwtAuthGuard)
     @Post(':id/start/:programId')
     start(@Req() req: any, @Param('id') id: string, @Param('programId') programId: string): Promise<void> {
-        return this.service.startProgram(id, programId, req.user.person.id);
+        return this.service.startProgram(id, programId, req.user.user.personId);
     }
 
     @ApiOperation({ summary: 'Pause current program' })
