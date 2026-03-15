@@ -10,6 +10,7 @@ import {StringValue} from "ms";
 import {JwtStrategy} from "@features/auth/infrastructure/security/jwt.strategy";
 import {APP_GUARD} from "@nestjs/core";
 import {RolesGuard} from "@features/auth/infrastructure/security/roles.guard";
+import {personProviders} from "@features/person/infrastructure/di/person.providers";
 
 @Module({
     imports: [
@@ -27,10 +28,7 @@ import {RolesGuard} from "@features/auth/infrastructure/security/roles.guard";
         JwtStrategy,
         AuthService,
         PrismaService,
-        {
-            provide: APP_GUARD,
-            useClass: RolesGuard,
-        },
+        ...personProviders,
         ...userProviders, // 🔥 inject UserRepository
     ],
 })

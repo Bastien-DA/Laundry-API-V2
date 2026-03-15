@@ -49,7 +49,7 @@ export class PrismaLaundryRepository implements LaundryRepository {
         const row = await this.prisma.laundry.findUnique({
             where: { id },
             include: {
-                machines: true, // 👈 pas de select
+                machines: { select: { id: true }}, // 👈 pas de select
             },
         });
 
@@ -61,7 +61,7 @@ export class PrismaLaundryRepository implements LaundryRepository {
             where: this.buildWhere(params?.filter),
             orderBy: this.buildOrderBy(params?.sort),
             include: {
-                machines: true, // 👈 pas de select
+                machines: { select: { id: true }}, // 👈 pas de select
             },
         });
 

@@ -51,7 +51,7 @@ export class PrismaPersonRepository implements PersonRepository{
     async findById(id: string): Promise<PersonEntity | null> {
         const row = await this.prisma.person.findUnique({
             where: { id },
-            select: { id:true },
+            select: { id:true, personType: true, username: true, user: { select: { id: true }} },
         });
         return row ? this.toEntity(row) : null;
     }

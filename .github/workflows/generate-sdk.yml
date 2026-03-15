@@ -135,5 +135,6 @@ jobs:
           git checkout --orphan sdk-ts
           rm -rf ./*
           cp -r /tmp/final-sdk-ts/* .
+          git add -f build || git add -f dist || echo "No build/dist folder found"
           git add .
           git commit -m "Update TS SDK" && git push origin sdk-ts --force || echo "No changes"
