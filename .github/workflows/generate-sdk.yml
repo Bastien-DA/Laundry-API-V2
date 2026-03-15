@@ -105,6 +105,10 @@ jobs:
             --additional-properties=npmName=@laundry/api-sdk,supportsES6=true,withInterfaces=true
           
           cd sdk-ts
+          
+          sed -i 's/"main": "index.js"/"main": ".\/dist\/index.js"/' package.json
+          sed -i 's/"typings": "index.d.ts"/"typings": ".\/dist\/index.d.ts"/' package.json
+          
           npm install
           npm run build
           
