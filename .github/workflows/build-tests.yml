@@ -45,7 +45,7 @@ jobs:
         with:
           args: >
             -Dsonar.projectKey=${{ vars.SONAR_PROJECT_KEY }}
-            -Dsonar.organization=Bastien-DA
+            -Dsonar.organization=${{ vars.SONAR_ORGANIZATION_KEY }}
             -Dsonar.projectName=${{ vars.SONAR_PROJECT_NAME }}
             -Dsonar.sources=src
             -Dsonar.tests=src,test
