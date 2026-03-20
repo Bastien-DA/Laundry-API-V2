@@ -1,0 +1,1 @@
+{"version":3,"file":"laundry.providers.js","sourceRoot":"","sources":["../../../../../../src/features/laundry/infrastructure/di/laundry.providers.ts"],"names":[],"mappings":";;;AAAA,mFAA4G;AAC5G,6EAAqF;AAExE,QAAA,gBAAgB,GAAG;IAC5B;QACI,OAAO,EAAE,mBAAmB;QAC5B,QAAQ,EAAE,mDAAuB;KACpC;IACD,8BAAa;CAChB,CAAC"}

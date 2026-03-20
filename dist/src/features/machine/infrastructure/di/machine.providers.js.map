@@ -1,0 +1,1 @@
+{"version":3,"file":"machine.providers.js","sourceRoot":"","sources":["../../../../../../src/features/machine/infrastructure/di/machine.providers.ts"],"names":[],"mappings":";;;AAAA,mFAA4G;AAC5G,6EAAqF;AAExE,QAAA,gBAAgB,GAAG;IAC5B,EAAE,OAAO,EAAE,mBAAmB,EAAE,QAAQ,EAAE,mDAAuB,EAAE;IACnE,8BAAa;CAChB,CAAC"}
